@@ -18,7 +18,29 @@ class JobResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
-    protected static ?string $navigationGroup = 'Jobs';
+    protected static ?string $navigationGroup = null;
+    
+    public static function getNavigationGroup(): ?string
+    {
+        return __('app.jobs');
+    }
+    
+    protected static ?string $navigationLabel = null;
+    
+    public static function getNavigationLabel(): string
+    {
+        return __('app.job_postings');
+    }
+    
+    public static function getModelLabel(): string
+    {
+        return __('app.job_title');
+    }
+    
+    public static function getPluralModelLabel(): string
+    {
+        return __('app.job_postings');
+    }
 
     public static function form(Form $form): Form
     {
@@ -31,39 +53,48 @@ class JobResource extends Resource
                     ->preload()
                     ->visible(fn () => auth()->user()->isAdmin()),
                 Forms\Components\TextInput::make('title')
+                    ->label(__('app.job_title'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\RichEditor::make('description')
+                    ->label(__('app.job_description'))
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('location')
+                    ->label(__('common.location'))
                     ->maxLength(255),
                 Forms\Components\Select::make('job_type')
+                    ->label(__('app.job_type'))
                     ->options([
-                        'full-time' => 'Full Time',
-                        'part-time' => 'Part Time',
-                        'contract' => 'Contract',
-                        'internship' => 'Internship',
+                        'full-time' => __('app.full_time'),
+                        'part-time' => __('app.part_time'),
+                        'contract' => __('app.contract'),
+                        'internship' => __('app.internship'),
                     ])
                     ->required(),
                 Forms\Components\TextInput::make('salary_range')
+                    ->label(__('app.salary_range'))
                     ->maxLength(255)
                     ->placeholder('e.g., $50,000 - $70,000'),
                 Forms\Components\Select::make('experience_level')
+                    ->label(__('app.experience_level'))
                     ->options([
-                        'entry' => 'Entry Level',
-                        'mid' => 'Mid Level',
-                        'senior' => 'Senior Level',
+                        'entry' => __('app.entry_level'),
+                        'mid' => __('app.mid_level'),
+                        'senior' => __('app.senior_level'),
                     ])
                     ->required(),
                 Forms\Components\TextInput::make('category')
+                    ->label(__('app.category'))
                     ->maxLength(255),
                 Forms\Components\DatePicker::make('application_deadline')
+                    ->label(__('app.application_deadline'))
                     ->required(),
                 Forms\Components\Select::make('status')
+                    ->label(__('common.status'))
                     ->options([
-                        'active' => 'Active',
-                        'closed' => 'Closed',
+                        'active' => __('app.active'),
+                        'closed' => __('app.closed'),
                     ])
                     ->required()
                     ->default('active'),
@@ -75,23 +106,42 @@ class JobResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('hr.company_name')
+                    ->label(__('app.company_name'))
                     ->searchable()
                     ->sortable()
                     ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isCandidate()),
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('app.job_title'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('location')
+                    ->label(__('common.location'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('job_type')
+                    ->label(__('app.job_type'))
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'full-time' => __('app.full_time'),
+                        'part-time' => __('app.part_time'),
+                        'contract' => __('app.contract'),
+                        'internship' => __('app.internship'),
+                        default => $state,
+                    })
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('salary_range')
+                    ->label(__('app.salary_range'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('experience_level')
+                    ->label(__('app.experience_level'))
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'entry' => __('app.entry_level'),
+                        'mid' => __('app.mid_level'),
+                        'senior' => __('app.senior_level'),
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'entry' => 'success',
                         'mid' => 'warning',
@@ -101,13 +151,21 @@ class JobResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category')
+                    ->label(__('app.category'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('application_deadline')
+                    ->label(__('app.application_deadline'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->label(__('common.status'))
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'active' => __('app.active'),
+                        'closed' => __('app.closed'),
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'active' => 'success',
                         'closed' => 'danger',
@@ -117,11 +175,11 @@ class JobResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('applications_count')
                     ->counts('applications')
-                    ->label('Applications')
+                    ->label(__('app.applications'))
                     ->sortable()
                     ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR()),
                 Tables\Columns\IconColumn::make('has_applied')
-                    ->label('Applied')
+                    ->label(__('app.applied'))
                     ->boolean()
                     ->getStateUsing(function ($record) {
                         if (!auth()->user()->isCandidate() || !auth()->user()->candidate) {
@@ -139,27 +197,30 @@ class JobResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->label(__('common.status'))
                     ->options([
-                        'active' => 'Active',
-                        'closed' => 'Closed',
+                        'active' => __('app.active'),
+                        'closed' => __('app.closed'),
                     ]),
                 Tables\Filters\SelectFilter::make('job_type')
+                    ->label(__('app.job_type'))
                     ->options([
-                        'full-time' => 'Full Time',
-                        'part-time' => 'Part Time',
-                        'contract' => 'Contract',
-                        'internship' => 'Internship',
+                        'full-time' => __('app.full_time'),
+                        'part-time' => __('app.part_time'),
+                        'contract' => __('app.contract'),
+                        'internship' => __('app.internship'),
                     ]),
                 Tables\Filters\SelectFilter::make('experience_level')
+                    ->label(__('app.experience_level'))
                     ->options([
-                        'entry' => 'Entry Level',
-                        'mid' => 'Mid Level',
-                        'senior' => 'Senior Level',
+                        'entry' => __('app.entry_level'),
+                        'mid' => __('app.mid_level'),
+                        'senior' => __('app.senior_level'),
                     ]),
             ])
             ->actions([
                 Tables\Actions\Action::make('apply')
-                    ->label('Apply')
+                    ->label(__('app.apply'))
                     ->icon('heroicon-o-paper-airplane')
                     ->color('success')
                     ->visible(function ($record) {
@@ -177,8 +238,8 @@ class JobResource extends Resource
                         
                         return $record->status === 'active';
                     })
-                    ->modalHeading(fn ($record) => 'Apply for: ' . $record->title)
-                    ->modalDescription('Review job details and upload your resume')
+                    ->modalHeading(fn ($record) => __('app.apply_for') . ': ' . $record->title)
+                    ->modalDescription(__('app.review_job_details'))
                     ->modalContent(function ($record) {
                         $html = '<div class="space-y-4 mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">';
                         $html .= '<div class="grid grid-cols-2 gap-4 mb-4">';
@@ -198,24 +259,24 @@ class JobResource extends Resource
                     })
                     ->form([
                         Forms\Components\Toggle::make('use_existing_resume')
-                            ->label('Use my profile resume')
+                            ->label(__('app.use_existing_resume'))
                             ->default(fn () => auth()->user()->candidate && auth()->user()->candidate->resume_path ? true : false)
                             ->live()
                             ->disabled(fn () => !auth()->user()->candidate || !auth()->user()->candidate->resume_path)
                             ->helperText(function () {
                                 if (auth()->user()->candidate && auth()->user()->candidate->resume_path) {
-                                    return 'Use the resume from your candidate profile';
+                                    return __('app.use_profile_resume');
                                 }
-                                return 'No resume in your profile. Please upload one below.';
+                                return __('app.no_resume_in_profile');
                             }),
                         Forms\Components\FileUpload::make('resume')
-                            ->label('Or Upload New Resume')
+                            ->label(__('app.or_upload_new_resume'))
                             ->directory('application-resumes')
                             ->visibility('public')
                             ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
                             ->required(fn ($get) => !$get('use_existing_resume'))
                             ->visible(fn ($get) => !$get('use_existing_resume'))
-                            ->helperText('Upload your resume (PDF, DOC, or DOCX). Max size: 10MB'),
+                            ->helperText(__('app.upload_resume_helper')),
                     ])
                     ->action(function ($record, array $data) {
                         $user = auth()->user();
@@ -264,8 +325,8 @@ class JobResource extends Resource
 
                         \Filament\Notifications\Notification::make()
                             ->success()
-                            ->title('Application Submitted Successfully!')
-                            ->body('Your application for "' . $record->title . '" has been submitted.')
+                            ->title(__('app.application_submitted_successfully'))
+                            ->body(str_replace(':title', $record->title, __('app.application_submitted_body')))
                             ->send();
                     }),
                 Tables\Actions\EditAction::make()

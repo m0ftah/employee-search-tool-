@@ -18,6 +18,7 @@ class Application extends Model
         'feedback_from_hr',
         'feedback_from_candidate',
         'applied_at',
+        'score',
     ];
 
     /**
@@ -48,4 +49,5 @@ class Application extends Model
         return $this->belongsTo(Candidate::class);
     }
 }
+
 

@@ -103,7 +103,7 @@ class CandidateRegistrationController extends Controller
         auth()->login($user);
 
         return redirect('/admin')
-            ->with('success', 'Registration successful! Welcome to our platform.');
+            ->with('success', __('app.registration_successful'));
     }
 
     /**

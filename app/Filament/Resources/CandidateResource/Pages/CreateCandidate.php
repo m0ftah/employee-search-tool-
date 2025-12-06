@@ -10,3 +10,4 @@ class CreateCandidate extends CreateRecord
     protected static string $resource = CandidateResource::class;
 }
 
+

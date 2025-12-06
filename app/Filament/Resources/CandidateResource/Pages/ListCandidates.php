@@ -18,3 +18,4 @@ class ListCandidates extends ListRecords
     }
 }
 
+

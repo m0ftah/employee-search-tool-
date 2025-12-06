@@ -18,3 +18,4 @@ class EditCandidate extends EditRecord
     }
 }
 
+

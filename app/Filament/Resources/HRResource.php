@@ -16,36 +16,56 @@ class HRResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
-    protected static ?string $navigationGroup = 'User Management';
+    protected static ?string $navigationGroup = null;
+    
+    public static function getNavigationGroup(): ?string
+    {
+        return __('app.user_management');
+    }
 
-    protected static ?string $navigationLabel = 'HRs';
+    protected static ?string $navigationLabel = null;
+    
+    public static function getNavigationLabel(): string
+    {
+        return __('app.hrs');
+    }
+    
+    public static function getModelLabel(): string
+    {
+        return __('app.hr');
+    }
+    
+    public static function getPluralModelLabel(): string
+    {
+        return __('app.hrs');
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('User Information')
+                Forms\Components\Section::make(__('app.user_information'))
                     ->schema([
                         Forms\Components\TextInput::make('user_name')
-                            ->label('Name')
+                            ->label(__('common.name'))
                             ->required()
                             ->maxLength(255)
                             ->visible(fn (string $context): bool => $context === 'create'),
                         Forms\Components\TextInput::make('user_email')
-                            ->label('Email')
+                            ->label(__('app.email_address'))
                             ->email()
                             ->required()
                             ->maxLength(255)
                             ->unique('users', 'email')
                             ->visible(fn (string $context): bool => $context === 'create'),
                         Forms\Components\TextInput::make('user_password')
-                            ->label('Password')
+                            ->label(__('common.password'))
                             ->password()
                             ->required()
                             ->maxLength(255)
                             ->visible(fn (string $context): bool => $context === 'create'),
                         Forms\Components\Select::make('user_id')
-                            ->label('User')
+                            ->label(__('app.user'))
                             ->relationship('user', 'name')
                             ->required()
                             ->searchable()
@@ -54,23 +74,29 @@ class HRResource extends Resource
                             ->visible(fn (string $context): bool => $context === 'edit'),
                     ])
                     ->columns(2),
-                Forms\Components\Section::make('HR Information')
+                Forms\Components\Section::make(__('app.hr_information'))
                     ->schema([
                         Forms\Components\TextInput::make('company_name')
+                            ->label(__('app.company_name'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('position')
+                            ->label(__('app.position'))
                             ->maxLength(255),
                         Forms\Components\TextInput::make('phone')
+                            ->label(__('app.phone_number'))
                             ->tel()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('location')
+                            ->label(__('common.location'))
                             ->maxLength(255),
                         Forms\Components\FileUpload::make('company_logo')
+                            ->label(__('app.company_logo'))
                             ->image()
                             ->directory('company-logos')
                             ->visibility('public'),
                         Forms\Components\Textarea::make('bio')
+                            ->label(__('app.bio'))
                             ->rows(3)
                             ->columnSpanFull(),
                     ])
@@ -83,26 +109,33 @@ class HRResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
+                    ->label(__('common.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.email')
+                    ->label(__('app.email_address'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('company_name')
+                    ->label(__('app.company_name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('position')
+                    ->label(__('app.position'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
+                    ->label(__('app.phone_number'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('location')
+                    ->label(__('common.location'))
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('company_logo')
+                    ->label(__('app.company_logo'))
                     ->circular(),
                 Tables\Columns\TextColumn::make('jobs_count')
                     ->counts('jobs')
-                    ->label('Jobs')
+                    ->label(__('app.jobs_count'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
