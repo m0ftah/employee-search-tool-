@@ -11,10 +11,21 @@ class RolePolicy
     use HandlesAuthorization;
 
     /**
+     * Check if user is super admin
+     */
+    private function isSuperAdmin(User $user): bool
+    {
+        return $user->hasRole('super_admin');
+    }
+
+    /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('view_any_role');
     }
 
@@ -23,6 +34,9 @@ class RolePolicy
      */
     public function view(User $user, Role $role): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('view_role');
     }
 
@@ -31,6 +45,9 @@ class RolePolicy
      */
     public function create(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('create_role');
     }
 
@@ -39,6 +56,9 @@ class RolePolicy
      */
     public function update(User $user, Role $role): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('update_role');
     }
 
@@ -47,6 +67,9 @@ class RolePolicy
      */
     public function delete(User $user, Role $role): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('delete_role');
     }
 
@@ -55,6 +78,9 @@ class RolePolicy
      */
     public function deleteAny(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('delete_any_role');
     }
 
@@ -63,7 +89,10 @@ class RolePolicy
      */
     public function forceDelete(User $user, Role $role): bool
     {
-        return $user->can('{{ ForceDelete }}');
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
+        return $user->can('force_delete_role');
     }
 
     /**
@@ -71,7 +100,10 @@ class RolePolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('{{ ForceDeleteAny }}');
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
+        return $user->can('force_delete_any_role');
     }
 
     /**
@@ -79,7 +111,10 @@ class RolePolicy
      */
     public function restore(User $user, Role $role): bool
     {
-        return $user->can('{{ Restore }}');
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
+        return $user->can('restore_role');
     }
 
     /**
@@ -87,7 +122,10 @@ class RolePolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('{{ RestoreAny }}');
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
+        return $user->can('restore_any_role');
     }
 
     /**
@@ -95,7 +133,10 @@ class RolePolicy
      */
     public function replicate(User $user, Role $role): bool
     {
-        return $user->can('{{ Replicate }}');
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
+        return $user->can('replicate_role');
     }
 
     /**
@@ -103,6 +144,9 @@ class RolePolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('{{ Reorder }}');
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
+        return $user->can('reorder_role');
     }
 }

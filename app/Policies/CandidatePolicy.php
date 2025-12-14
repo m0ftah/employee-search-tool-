@@ -11,10 +11,21 @@ class CandidatePolicy
     use HandlesAuthorization;
 
     /**
+     * Check if user is super admin
+     */
+    private function isSuperAdmin(User $user): bool
+    {
+        return $user->hasRole('super_admin');
+    }
+
+    /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('view_any_candidate');
     }
 
@@ -23,6 +34,9 @@ class CandidatePolicy
      */
     public function view(User $user, Candidate $candidate): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('view_candidate');
     }
 
@@ -31,6 +45,9 @@ class CandidatePolicy
      */
     public function create(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('create_candidate');
     }
 
@@ -39,6 +56,9 @@ class CandidatePolicy
      */
     public function update(User $user, Candidate $candidate): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('update_candidate');
     }
 
@@ -47,6 +67,9 @@ class CandidatePolicy
      */
     public function delete(User $user, Candidate $candidate): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('delete_candidate');
     }
 
@@ -55,6 +78,9 @@ class CandidatePolicy
      */
     public function deleteAny(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('delete_any_candidate');
     }
 
@@ -63,6 +89,9 @@ class CandidatePolicy
      */
     public function forceDelete(User $user, Candidate $candidate): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('force_delete_candidate');
     }
 
@@ -71,6 +100,9 @@ class CandidatePolicy
      */
     public function forceDeleteAny(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('force_delete_any_candidate');
     }
 
@@ -79,6 +111,9 @@ class CandidatePolicy
      */
     public function restore(User $user, Candidate $candidate): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('restore_candidate');
     }
 
@@ -87,6 +122,9 @@ class CandidatePolicy
      */
     public function restoreAny(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('restore_any_candidate');
     }
 
@@ -95,6 +133,9 @@ class CandidatePolicy
      */
     public function replicate(User $user, Candidate $candidate): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('replicate_candidate');
     }
 
@@ -103,6 +144,9 @@ class CandidatePolicy
      */
     public function reorder(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('reorder_candidate');
     }
 }

@@ -11,10 +11,21 @@ class JobPolicy
     use HandlesAuthorization;
 
     /**
+     * Check if user is super admin
+     */
+    private function isSuperAdmin(User $user): bool
+    {
+        return $user->hasRole('super_admin');
+    }
+
+    /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('view_any_job');
     }
 
@@ -23,6 +34,9 @@ class JobPolicy
      */
     public function view(User $user, Job $job): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('view_job');
     }
 
@@ -31,6 +45,9 @@ class JobPolicy
      */
     public function create(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('create_job');
     }
 
@@ -39,6 +56,9 @@ class JobPolicy
      */
     public function update(User $user, Job $job): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('update_job');
     }
 
@@ -47,6 +67,9 @@ class JobPolicy
      */
     public function delete(User $user, Job $job): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('delete_job');
     }
 
@@ -55,6 +78,9 @@ class JobPolicy
      */
     public function deleteAny(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('delete_any_job');
     }
 
@@ -63,6 +89,9 @@ class JobPolicy
      */
     public function forceDelete(User $user, Job $job): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('force_delete_job');
     }
 
@@ -71,6 +100,9 @@ class JobPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('force_delete_any_job');
     }
 
@@ -79,6 +111,9 @@ class JobPolicy
      */
     public function restore(User $user, Job $job): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('restore_job');
     }
 
@@ -87,6 +122,9 @@ class JobPolicy
      */
     public function restoreAny(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('restore_any_job');
     }
 
@@ -95,6 +133,9 @@ class JobPolicy
      */
     public function replicate(User $user, Job $job): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('replicate_job');
     }
 
@@ -103,6 +144,9 @@ class JobPolicy
      */
     public function reorder(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('reorder_job');
     }
 }

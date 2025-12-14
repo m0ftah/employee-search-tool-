@@ -11,10 +11,21 @@ class HRPolicy
     use HandlesAuthorization;
 
     /**
+     * Check if user is super admin
+     */
+    private function isSuperAdmin(User $user): bool
+    {
+        return $user->hasRole('super_admin');
+    }
+
+    /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('view_any_h::r');
     }
 
@@ -23,6 +34,9 @@ class HRPolicy
      */
     public function view(User $user, HR $hR): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('view_h::r');
     }
 
@@ -31,6 +45,9 @@ class HRPolicy
      */
     public function create(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('create_h::r');
     }
 
@@ -39,6 +56,9 @@ class HRPolicy
      */
     public function update(User $user, HR $hR): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('update_h::r');
     }
 
@@ -47,6 +67,9 @@ class HRPolicy
      */
     public function delete(User $user, HR $hR): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('delete_h::r');
     }
 
@@ -55,6 +78,9 @@ class HRPolicy
      */
     public function deleteAny(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('delete_any_h::r');
     }
 
@@ -63,6 +89,9 @@ class HRPolicy
      */
     public function forceDelete(User $user, HR $hR): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('force_delete_h::r');
     }
 
@@ -71,6 +100,9 @@ class HRPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('force_delete_any_h::r');
     }
 
@@ -79,6 +111,9 @@ class HRPolicy
      */
     public function restore(User $user, HR $hR): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('restore_h::r');
     }
 
@@ -87,6 +122,9 @@ class HRPolicy
      */
     public function restoreAny(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('restore_any_h::r');
     }
 
@@ -95,6 +133,9 @@ class HRPolicy
      */
     public function replicate(User $user, HR $hR): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('replicate_h::r');
     }
 
@@ -103,6 +144,9 @@ class HRPolicy
      */
     public function reorder(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         return $user->can('reorder_h::r');
     }
 }
