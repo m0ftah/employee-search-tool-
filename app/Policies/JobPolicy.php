@@ -26,6 +26,10 @@ class JobPolicy
         if ($this->isSuperAdmin($user)) {
             return true;
         }
+        // Allow Admin, HR, and Candidate users to view jobs (based on user type)
+        if ($user->isAdmin() || $user->isHR() || $user->isCandidate()) {
+            return true;
+        }
         return $user->can('view_any_job');
     }
 
@@ -35,6 +39,10 @@ class JobPolicy
     public function view(User $user, Job $job): bool
     {
         if ($this->isSuperAdmin($user)) {
+            return true;
+        }
+        // Allow Admin, HR, and Candidate users to view jobs
+        if ($user->isAdmin() || $user->isHR() || $user->isCandidate()) {
             return true;
         }
         return $user->can('view_job');
@@ -48,6 +56,10 @@ class JobPolicy
         if ($this->isSuperAdmin($user)) {
             return true;
         }
+        // Allow Admin and HR users to create jobs
+        if ($user->isAdmin() || $user->isHR()) {
+            return true;
+        }
         return $user->can('create_job');
     }
 
@@ -59,6 +71,10 @@ class JobPolicy
         if ($this->isSuperAdmin($user)) {
             return true;
         }
+        // Allow Admin and HR users to update jobs (HR can only update their own jobs, enforced in EditJob page)
+        if ($user->isAdmin() || $user->isHR()) {
+            return true;
+        }
         return $user->can('update_job');
     }
 
@@ -68,6 +84,10 @@ class JobPolicy
     public function delete(User $user, Job $job): bool
     {
         if ($this->isSuperAdmin($user)) {
+            return true;
+        }
+        // Allow Admin and HR users to delete jobs (HR can only delete their own jobs, enforced in EditJob page)
+        if ($user->isAdmin() || $user->isHR()) {
             return true;
         }
         return $user->can('delete_job');

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListUsers extends ListRecords
 {
@@ -15,6 +16,12 @@ class ListUsers extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    protected function getTableQuery(): Builder
+    {
+        // Only show admin users in Users resource
+        return parent::getTableQuery()->where('type', 'admin');
     }
 }
 

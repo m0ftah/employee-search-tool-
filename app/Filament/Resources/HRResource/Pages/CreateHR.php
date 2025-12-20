@@ -27,11 +27,15 @@ class CreateHR extends CreateRecord
             'email_verified_at' => now(),
         ]);
 
-        // Assign HR role if it exists
+        // Assign HR role (try both 'hr' and 'HR' for compatibility)
         try {
-            $user->assignRole('HR');
+            $user->assignRole('hr');
         } catch (\Exception $e) {
-            // Role might not exist, that's okay
+            try {
+                $user->assignRole('HR');
+            } catch (\Exception $e2) {
+                // Role might not exist, that's okay
+            }
         }
 
         // Set the user_id for the HR record

@@ -55,15 +55,6 @@ class UserResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
-                Forms\Components\Select::make('type')
-                    ->label(__('app.type'))
-                    ->options([
-                        'admin' => __('app.admin'),
-                        'hr' => __('app.hr'),
-                        'candidate' => __('app.candidate'),
-                    ])
-                    ->required()
-                    ->default('candidate'),
                 Forms\Components\TextInput::make('password')
                     ->label(__('common.password'))
                     ->password()
@@ -71,14 +62,6 @@ class UserResource extends Resource
                     ->dehydrated(fn ($state) => filled($state))
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->maxLength(255),
-                Forms\Components\Select::make('roles')
-                    ->label(__('app.roles'))
-                    ->relationship('roles', 'name')
-                    ->multiple()
-                    ->preload()
-                    ->searchable()
-                    ->helperText(__('app.select_roles_helper')),
-                
             ]);
     }
 
@@ -134,8 +117,6 @@ class UserResource extends Resource
                     ->label(__('app.type'))
                     ->options([
                         'admin' => __('app.admin'),
-                        'hr' => __('app.hr'),
-                        'candidate' => __('app.candidate'),
                     ]),
             ])
             ->actions([
