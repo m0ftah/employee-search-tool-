@@ -166,6 +166,52 @@ class CandidateResource extends Resource
                         'master' => __('app.master'),
                         'phd' => __('app.phd'),
                     ]),
+                Tables\Filters\Filter::make('score')
+                    ->label(__('app.cv_score'))
+                    ->form([
+                        Forms\Components\TextInput::make('score_from')
+                            ->label(__('app.min_score'))
+                            ->numeric()
+                            ->placeholder('0'),
+                        Forms\Components\TextInput::make('score_to')
+                            ->label(__('app.max_score'))
+                            ->numeric()
+                            ->placeholder('10'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['score_from'],
+                                fn ($query, $score) => $query->where('score', '>=', $score)
+                            )
+                            ->when(
+                                $data['score_to'],
+                                fn ($query, $score) => $query->where('score', '<=', $score)
+                            );
+                    }),
+                Tables\Filters\Filter::make('years_of_experience')
+                    ->label(__('app.years_of_experience'))
+                    ->form([
+                        Forms\Components\TextInput::make('experience_from')
+                            ->label(__('app.min_years'))
+                            ->numeric()
+                            ->placeholder('0'),
+                        Forms\Components\TextInput::make('experience_to')
+                            ->label(__('app.max_years'))
+                            ->numeric()
+                            ->placeholder('50'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['experience_from'],
+                                fn ($query, $years) => $query->where('years_of_experience', '>=', $years)
+                            )
+                            ->when(
+                                $data['experience_to'],
+                                fn ($query, $years) => $query->where('years_of_experience', '<=', $years)
+                            );
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

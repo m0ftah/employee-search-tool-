@@ -19,24 +19,24 @@ class JobResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
     protected static ?string $navigationGroup = null;
-    
+
     public static function getNavigationGroup(): ?string
     {
         return __('app.jobs');
     }
-    
+
     protected static ?string $navigationLabel = null;
-    
+
     public static function getNavigationLabel(): string
     {
         return __('app.job_postings');
     }
-    
+
     public static function getModelLabel(): string
     {
         return __('app.job_title');
     }
-    
+
     public static function getPluralModelLabel(): string
     {
         return __('app.job_postings');
@@ -51,7 +51,15 @@ class JobResource extends Resource
                     ->required()
                     ->searchable()
                     ->preload()
-                    ->visible(fn () => auth()->user()->isAdmin()),
+                    ->visible(fn () => auth()->user()->isAdmin())
+                    ->default(function () {
+                        // For HR users, set their HR ID as default (even though field is hidden)
+                        $user = auth()->user();
+                        if ($user->isHR() && $user->hr) {
+                            return $user->hr->id;
+                        }
+                        return null;
+                    }),
                 Forms\Components\TextInput::make('title')
                     ->label(__('app.job_title'))
                     ->required()
@@ -154,6 +162,13 @@ class JobResource extends Resource
                     ->label(__('app.category'))
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('description')
+                    ->label(__('app.job_description'))
+                    ->html()
+                    ->limit(100)
+                    ->tooltip(fn ($record) => strip_tags($record->description))
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('application_deadline')
                     ->label(__('app.application_deadline'))
                     ->date()
@@ -227,7 +242,7 @@ class JobResource extends Resource
                         if (!auth()->user()->isCandidate()) {
                             return false;
                         }
-                        
+
                         // Check if already applied
                         if (auth()->user()->candidate) {
                             $hasApplied = \App\Models\Application::where('job_id', $record->id)
@@ -235,7 +250,7 @@ class JobResource extends Resource
                                 ->exists();
                             return $record->status === 'active' && !$hasApplied;
                         }
-                        
+
                         return $record->status === 'active';
                     })
                     ->modalHeading(fn ($record) => __('app.apply_for') . ': ' . $record->title)
@@ -280,7 +295,7 @@ class JobResource extends Resource
                     ])
                     ->action(function ($record, array $data) {
                         $user = auth()->user();
-                        
+
                         if (!$user->candidate) {
                             throw new \Exception('Candidate profile not found. Please complete your profile first.');
                         }

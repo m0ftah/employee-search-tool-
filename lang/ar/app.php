@@ -56,6 +56,7 @@ return [
     'senior_level' => 'خبير',
     'category' => 'الفئة',
     'application_deadline' => 'آخر موعد للتقديم',
+    'active' => 'نشط',
     'closed' => 'مغلق',
     
     // Applications
@@ -138,5 +139,15 @@ return [
     'candidate' => 'مرشح',
     'jobs_count' => 'الوظائف',
     'type' => 'النوع',
+    'min_score' => 'الحد الأدنى للنقاط',
+    'max_score' => 'الحد الأقصى للنقاط',
+    'min_years' => 'الحد الأدنى للسنوات',
+    'max_years' => 'الحد الأقصى للسنوات',
+    'total_candidates' => 'إجمالي المرشحين',
+    'total_users' => 'إجمالي المستخدمين',
+    'total_applications' => 'إجمالي الطلبات',
+    'statistics' => 'الإحصائيات',
+    'statistics_overview' => 'نظرة عامة على الإحصائيات',
+    'applications_by_status' => 'الطلبات حسب الحالة',
 ];
 

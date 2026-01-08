@@ -17,24 +17,24 @@ class ApplicationResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = null;
-    
+
     public static function getNavigationGroup(): ?string
     {
         return __('app.jobs');
     }
-    
+
     protected static ?string $navigationLabel = null;
-    
+
     public static function getNavigationLabel(): string
     {
         return __('app.applications');
     }
-    
+
     public static function getModelLabel(): string
     {
         return __('app.application');
     }
-    
+
     public static function getPluralModelLabel(): string
     {
         return __('app.applications');
@@ -45,7 +45,7 @@ class ApplicationResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('job_id')
-                    ->relationship('job', 'title', 
+                    ->relationship('job', 'title',
                         fn ($query) => auth()->user()->isHR() && auth()->user()->hr
                             ? $query->where('hr_id', auth()->user()->hr->id)
                             : $query
@@ -157,7 +157,7 @@ class ApplicationResource extends Resource
                     ->openUrlInNewTab()
                     ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR())
                     ->sortable(false),
-                    
+
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -205,6 +205,8 @@ class ApplicationResource extends Resource
                 Tables\Filters\SelectFilter::make('job_id')
                     ->relationship('job', 'title')
                     ->label(__('app.job_title')),
+
+
             ])
             ->actions([
                 Tables\Actions\Action::make('accept')
@@ -328,21 +330,21 @@ class ApplicationResource extends Resource
         if (!$user) {
             return false;
         }
-        
+
         if ($user->isAdmin()) {
             return true;
         }
-        
+
         if ($user->isHR() && $user->hr) {
             // HR can view applications for their jobs
             return $record->job && $record->job->hr_id === $user->hr->id;
         }
-        
+
         if ($user->isCandidate() && $user->candidate) {
             // Candidates can view their own applications
             return $record->candidate_id === $user->candidate->id;
         }
-        
+
         return false;
     }
 
@@ -354,7 +356,7 @@ class ApplicationResource extends Resource
         if (!$user) {
             return false;
         }
-        
+
         return $user->isAdmin();
     }
 }

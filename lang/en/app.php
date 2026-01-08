@@ -57,6 +57,7 @@ return [
     'category' => 'Category',
     'application_deadline' => 'Application Deadline',
     'application_deadline' => 'Application Deadline',
+    'active' => 'Active',
     'closed' => 'Closed',
     
     // Applications
@@ -139,5 +140,15 @@ return [
     'candidate' => 'Candidate',
     'jobs_count' => 'Jobs',
     'type' => 'Type',
+    'min_score' => 'Min Score',
+    'max_score' => 'Max Score',
+    'min_years' => 'Min Years',
+    'max_years' => 'Max Years',
+    'total_candidates' => 'Total Candidates',
+    'total_users' => 'Total Users',
+    'total_applications' => 'Total Applications',
+    'statistics' => 'Statistics',
+    'statistics_overview' => 'Statistics Overview',
+    'applications_by_status' => 'Applications by Status',
 ];
 
