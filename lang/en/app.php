@@ -150,5 +150,8 @@ return [
     'statistics' => 'Statistics',
     'statistics_overview' => 'Statistics Overview',
     'applications_by_status' => 'Applications by Status',
+    
+    // Dashboard
+    'dashboard' => 'Dashboard',
 ];
 

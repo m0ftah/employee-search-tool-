@@ -149,5 +149,8 @@ return [
     'statistics' => 'الإحصائيات',
     'statistics_overview' => 'نظرة عامة على الإحصائيات',
     'applications_by_status' => 'الطلبات حسب الحالة',
+    
+    // Dashboard
+    'dashboard' => 'لوحة التحكم',
 ];
 
