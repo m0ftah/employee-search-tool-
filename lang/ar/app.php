@@ -152,5 +152,8 @@ return [
     
     // Dashboard
     'dashboard' => 'لوحة التحكم',
+    
+    // Chat
+    'chat' => 'محادثة',
 ];
 

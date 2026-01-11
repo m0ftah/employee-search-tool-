@@ -107,6 +107,7 @@ class HRResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->with('user'))
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->label(__('common.name'))
@@ -146,6 +147,64 @@ class HRResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('chat')
+                    ->label(__('app.chat'))
+                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->color('info')
+                    ->action(function ($record) {
+                        $user = auth()->user();
+                        
+                        if (!$user || !$user->isCandidate()) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Error')
+                                ->body('Only candidates can chat with HR.')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+                        
+                        // Load user relationship
+                        if (!$record->relationLoaded('user')) {
+                            $record->load('user');
+                        }
+                        
+                        if (!$record->user) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Error')
+                                ->body('HR user not found.')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+                        
+                        try {
+                            // Create or get conversation
+                            $conversation = $user->createConversationWith($record->user);
+                            
+                            if (!$conversation) {
+                                throw new \Exception('Failed to create conversation.');
+                            }
+                            
+                            $prefix = config('wirechat.routes.prefix', 'chats');
+                            $chatUrl = url("/{$prefix}/{$conversation->id}");
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->success()
+                                ->title('Chat Created')
+                                ->body('Opening chat with ' . $record->user->name)
+                                ->send();
+                            
+                            // Redirect to chat
+                            return redirect($chatUrl);
+                        } catch (\Exception $e) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Error Creating Chat')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    })
+                    ->visible(fn () => auth()->user()?->isCandidate()),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

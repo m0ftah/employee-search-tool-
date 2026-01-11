@@ -153,5 +153,8 @@ return [
     
     // Dashboard
     'dashboard' => 'Dashboard',
+    
+    // Chat
+    'chat' => 'Chat',
 ];
 
