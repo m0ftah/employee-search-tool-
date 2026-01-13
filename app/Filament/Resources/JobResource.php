@@ -216,7 +216,8 @@ class JobResource extends Resource
                     ->options([
                         'active' => __('app.active'),
                         'closed' => __('app.closed'),
-                    ]),
+                    ])
+                    ->multiple(),
                 Tables\Filters\SelectFilter::make('job_type')
                     ->label(__('app.job_type'))
                     ->options([
@@ -224,15 +225,147 @@ class JobResource extends Resource
                         'part-time' => __('app.part_time'),
                         'contract' => __('app.contract'),
                         'internship' => __('app.internship'),
-                    ]),
+                    ])
+                    ->multiple(),
                 Tables\Filters\SelectFilter::make('experience_level')
                     ->label(__('app.experience_level'))
                     ->options([
                         'entry' => __('app.entry_level'),
                         'mid' => __('app.mid_level'),
                         'senior' => __('app.senior_level'),
-                    ]),
-            ])
+                    ])
+                    ->multiple(),
+                Tables\Filters\SelectFilter::make('hr_id')
+                    ->label(__('app.company_name'))
+                    ->relationship('hr', 'company_name')
+                    ->searchable()
+                    ->preload()
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isCandidate())
+                    ->multiple(),
+                Tables\Filters\Filter::make('title')
+                    ->label(__('app.job_title'))
+                    ->form([
+                        Forms\Components\TextInput::make('title')
+                            ->label(__('app.job_title'))
+                            ->placeholder(__('app.search_job_title')),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query->when(
+                            $data['title'],
+                            fn ($query, $title) => $query->where('title', 'like', "%{$title}%")
+                        );
+                    }),
+                Tables\Filters\Filter::make('location')
+                    ->label(__('common.location'))
+                    ->form([
+                        Forms\Components\TextInput::make('location')
+                            ->label(__('common.location'))
+                            ->placeholder(__('app.search_location')),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query->when(
+                            $data['location'],
+                            fn ($query, $location) => $query->where('location', 'like', "%{$location}%")
+                        );
+                    }),
+                Tables\Filters\Filter::make('category')
+                    ->label(__('app.category'))
+                    ->form([
+                        Forms\Components\TextInput::make('category')
+                            ->label(__('app.category'))
+                            ->placeholder(__('app.search_category')),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query->when(
+                            $data['category'],
+                            fn ($query, $category) => $query->where('category', 'like', "%{$category}%")
+                        );
+                    }),
+                Tables\Filters\Filter::make('salary_range')
+                    ->label(__('app.salary_range'))
+                    ->form([
+                        Forms\Components\TextInput::make('salary_range')
+                            ->label(__('app.salary_range'))
+                            ->placeholder(__('app.search_salary')),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query->when(
+                            $data['salary_range'],
+                            fn ($query, $salary) => $query->where('salary_range', 'like', "%{$salary}%")
+                        );
+                    }),
+                Tables\Filters\Filter::make('application_deadline')
+                    ->label(__('app.application_deadline'))
+                    ->form([
+                        Forms\Components\DatePicker::make('deadline_from')
+                            ->label(__('app.from_date')),
+                        Forms\Components\DatePicker::make('deadline_to')
+                            ->label(__('app.to_date')),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['deadline_from'],
+                                fn ($query, $date) => $query->whereDate('application_deadline', '>=', $date)
+                            )
+                            ->when(
+                                $data['deadline_to'],
+                                fn ($query, $date) => $query->whereDate('application_deadline', '<=', $date)
+                            );
+                    }),
+                Tables\Filters\Filter::make('has_applications')
+                    ->label(__('app.has_applications'))
+                    ->query(fn ($query) => $query->has('applications'))
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR())
+                    ->toggle(),
+                Tables\Filters\Filter::make('applications_count')
+                    ->label(__('app.applications_count'))
+                    ->form([
+                        Forms\Components\TextInput::make('applications_from')
+                            ->label(__('app.min_applications'))
+                            ->numeric()
+                            ->placeholder('0'),
+                        Forms\Components\TextInput::make('applications_to')
+                            ->label(__('app.max_applications'))
+                            ->numeric()
+                            ->placeholder('100'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['applications_from'],
+                                fn ($query, $count) => $query->has('applications', '>=', $count)
+                            )
+                            ->when(
+                                $data['applications_to'],
+                                fn ($query, $count) => $query->has('applications', '<=', $count)
+                            );
+                    })
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR()),
+                Tables\Filters\Filter::make('deadline_passed')
+                    ->label(__('app.deadline_passed'))
+                    ->query(fn ($query) => $query->where('application_deadline', '<', now()->toDateString()))
+                    ->toggle(),
+                Tables\Filters\Filter::make('created_at')
+                    ->label(__('app.created_at'))
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from')
+                            ->label(__('app.from_date')),
+                        Forms\Components\DatePicker::make('created_to')
+                            ->label(__('app.to_date')),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn ($query, $date) => $query->whereDate('created_at', '>=', $date)
+                            )
+                            ->when(
+                                $data['created_to'],
+                                fn ($query, $date) => $query->whereDate('created_at', '<=', $date)
+                            );
+                    }),
+            ], layout: Tables\Enums\FiltersLayout::AboveContentCollapsible)
             ->actions([
                 Tables\Actions\Action::make('apply')
                     ->label(__('app.apply'))

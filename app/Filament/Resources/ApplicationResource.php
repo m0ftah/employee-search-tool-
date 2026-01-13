@@ -195,19 +195,115 @@ class ApplicationResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->label(__('common.status'))
                     ->options([
                         'pending' => __('app.pending'),
                         'reviewed' => __('app.reviewed'),
                         'shortlisted' => __('app.shortlisted'),
                         'rejected' => __('app.rejected'),
                         'hired' => __('app.hired'),
-                    ]),
+                    ])
+                    ->multiple(),
                 Tables\Filters\SelectFilter::make('job_id')
+                    ->label(__('app.job_title'))
                     ->relationship('job', 'title')
-                    ->label(__('app.job_title')),
-
-
-            ])
+                    ->searchable()
+                    ->preload()
+                    ->multiple(),
+                Tables\Filters\SelectFilter::make('candidate_id')
+                    ->label(__('app.candidate'))
+                    ->relationship('candidate.user', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR())
+                    ->multiple(),
+                Tables\Filters\SelectFilter::make('job.hr.company_name')
+                    ->label(__('app.company_name'))
+                    ->relationship('job.hr', 'company_name')
+                    ->searchable()
+                    ->preload()
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isCandidate())
+                    ->multiple(),
+                Tables\Filters\Filter::make('score')
+                    ->label(__('app.cv_score'))
+                    ->form([
+                        Forms\Components\TextInput::make('score_from')
+                            ->label(__('app.min_score'))
+                            ->numeric()
+                            ->placeholder('0'),
+                        Forms\Components\TextInput::make('score_to')
+                            ->label(__('app.max_score'))
+                            ->placeholder('10')
+                            ->numeric(),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['score_from'],
+                                fn ($query, $score) => $query->whereHas('candidate', function ($q) use ($score) {
+                                    $q->where('score', '>=', $score);
+                                })
+                            )
+                            ->when(
+                                $data['score_to'],
+                                fn ($query, $score) => $query->whereHas('candidate', function ($q) use ($score) {
+                                    $q->where('score', '<=', $score);
+                                })
+                            );
+                    })
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR()),
+                Tables\Filters\Filter::make('applied_at')
+                    ->label(__('app.applied_at'))
+                    ->form([
+                        Forms\Components\DatePicker::make('applied_from')
+                            ->label(__('app.from_date')),
+                        Forms\Components\DatePicker::make('applied_to')
+                            ->label(__('app.to_date')),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['applied_from'],
+                                fn ($query, $date) => $query->whereDate('applied_at', '>=', $date)
+                            )
+                            ->when(
+                                $data['applied_to'],
+                                fn ($query, $date) => $query->whereDate('applied_at', '<=', $date)
+                            );
+                    }),
+                Tables\Filters\Filter::make('has_resume')
+                    ->label(__('app.has_resume'))
+                    ->query(fn ($query) => $query->where(function ($q) {
+                        $q->whereNotNull('resume_path')
+                            ->orWhereHas('candidate', fn ($q) => $q->whereNotNull('resume_path'));
+                    }))
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR())
+                    ->toggle(),
+                Tables\Filters\Filter::make('has_feedback')
+                    ->label(__('app.has_hr_feedback'))
+                    ->query(fn ($query) => $query->whereNotNull('feedback_from_hr')->where('feedback_from_hr', '!=', ''))
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR())
+                    ->toggle(),
+                Tables\Filters\Filter::make('created_at')
+                    ->label(__('app.created_at'))
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from')
+                            ->label(__('app.from_date')),
+                        Forms\Components\DatePicker::make('created_to')
+                            ->label(__('app.to_date')),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn ($query, $date) => $query->whereDate('created_at', '>=', $date)
+                            )
+                            ->when(
+                                $data['created_to'],
+                                fn ($query, $date) => $query->whereDate('created_at', '<=', $date)
+                            );
+                    }),
+            ], layout: Tables\Enums\FiltersLayout::AboveContentCollapsible)
             ->actions([
                 Tables\Actions\Action::make('accept')
                     ->label(__('app.accept'))

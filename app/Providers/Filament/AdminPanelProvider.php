@@ -42,8 +42,24 @@ class AdminPanelProvider extends PanelProvider
                 return \App\Filament\Pages\Dashboard::getUrl();
             })
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => [
+                    50 => '#f0fdfa',
+                    100 => '#ccfbf1',
+                    200 => '#99f6e4',
+                    300 => '#5eead4',
+                    400 => '#2dd4bf',
+                    500 => '#14b8a6', // Teal primary
+                    600 => '#0d9488',
+                    700 => '#0f766e',
+                    800 => '#115e59',
+                    900 => '#134e4a',
+                    950 => '#042f2e',
+                ],
             ])
+            ->renderHook(
+                PanelsRenderHook::HEAD_START,
+                fn (): View => view('filament.components.gradient-theme')
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([

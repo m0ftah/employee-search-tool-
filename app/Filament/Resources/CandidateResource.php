@@ -166,7 +166,8 @@ class CandidateResource extends Resource
                         'bachelor' => __('app.bachelor'),
                         'master' => __('app.master'),
                         'phd' => __('app.phd'),
-                    ]),
+                    ])
+                    ->multiple(),
                 Tables\Filters\Filter::make('score')
                     ->label(__('app.cv_score'))
                     ->form([
@@ -213,7 +214,60 @@ class CandidateResource extends Resource
                                 fn ($query, $years) => $query->where('years_of_experience', '<=', $years)
                             );
                     }),
-            ])
+                Tables\Filters\Filter::make('has_resume')
+                    ->label(__('app.has_resume'))
+                    ->query(fn ($query) => $query->whereNotNull('resume_path'))
+                    ->toggle(),
+                Tables\Filters\Filter::make('has_applications')
+                    ->label(__('app.has_applications'))
+                    ->query(fn ($query) => $query->has('applications'))
+                    ->toggle(),
+                Tables\Filters\Filter::make('location')
+                    ->label(__('common.location'))
+                    ->form([
+                        Forms\Components\TextInput::make('location')
+                            ->label(__('common.location'))
+                            ->placeholder(__('app.search_location')),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query->when(
+                            $data['location'],
+                            fn ($query, $location) => $query->where('location', 'like', "%{$location}%")
+                        );
+                    }),
+                Tables\Filters\Filter::make('phone')
+                    ->label(__('app.phone_number'))
+                    ->form([
+                        Forms\Components\TextInput::make('phone')
+                            ->label(__('app.phone_number'))
+                            ->placeholder(__('app.search_phone')),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query->when(
+                            $data['phone'],
+                            fn ($query, $phone) => $query->where('phone', 'like', "%{$phone}%")
+                        );
+                    }),
+                Tables\Filters\Filter::make('created_at')
+                    ->label(__('app.created_at'))
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from')
+                            ->label(__('app.from_date')),
+                        Forms\Components\DatePicker::make('created_to')
+                            ->label(__('app.to_date')),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn ($query, $date) => $query->whereDate('created_at', '>=', $date)
+                            )
+                            ->when(
+                                $data['created_to'],
+                                fn ($query, $date) => $query->whereDate('created_at', '<=', $date)
+                            );
+                    }),
+            ], layout: Tables\Enums\FiltersLayout::AboveContentCollapsible)
             ->actions([
                 Tables\Actions\Action::make('chat')
                     ->label(__('app.chat'))

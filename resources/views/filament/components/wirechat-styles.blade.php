@@ -704,4 +704,790 @@
                     border-color 0.15s ease,
                     color 0.15s ease !important;
     }
+
+    /* ============================================
+       New Chat Modal - Beautiful UI
+       ============================================ */
+    
+    /* Modal backdrop - Universal selectors */
+    [wirechat] [role="dialog"],
+    [wirechat] [x-dialog],
+    [wirechat] [x-show],
+    [wirechat] .modal-backdrop,
+    [wirechat] [class*="modal-backdrop"],
+    [wirechat] [class*="overlay"],
+    [wirechat] [class*="backdrop"],
+    body > [style*="position: fixed"]:has([wirechat]),
+    .fi-modal-overlay:has([wirechat]),
+    [wirechat] + [style*="position: fixed"],
+    [wirechat] ~ [style*="position: fixed"] {
+        background: rgba(0, 0, 0, 0.5) !important;
+        backdrop-filter: blur(4px) !important;
+        z-index: 9999 !important;
+    }
+
+    /* Modal container - Only for Wirechat modals */
+    [wirechat] [role="dialog"] > div,
+    [wirechat] [role="dialog"] > div > div,
+    [wirechat] [x-dialog] > div,
+    [wirechat] [x-dialog] > div > div,
+    [wirechat] [class*="modal-content"],
+    [wirechat] [class*="modal-panel"],
+    [wirechat] [class*="dialog-panel"] {
+        background: var(--wc-bg) !important;
+        border-radius: 1.5rem !important;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+        border: 1px solid var(--wc-border) !important;
+        max-width: 500px !important;
+        width: 90% !important;
+        max-height: 85vh !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        margin: auto !important;
+        position: relative !important;
+    }
+
+    .dark [wirechat] [role="dialog"] > div,
+    .dark [wirechat] [class*="modal-content"] {
+        background: var(--wc-bg-dark) !important;
+        border-color: var(--wc-border-dark) !important;
+    }
+
+    /* Modal header */
+    [wirechat] [class*="modal-header"],
+    [wirechat] [class*="dialog-header"],
+    [wirechat] [role="dialog"] h2,
+    [wirechat] [role="dialog"] h3 {
+        padding: 1.5rem 1.5rem 1rem 1.5rem !important;
+        border-bottom: 1px solid var(--wc-border) !important;
+        background: transparent !important;
+        margin: 0 !important;
+        font-size: 1.25rem !important;
+        font-weight: 600 !important;
+        color: var(--wc-text) !important;
+    }
+
+    .dark [wirechat] [class*="modal-header"],
+    .dark [wirechat] [role="dialog"] h2,
+    .dark [wirechat] [role="dialog"] h3 {
+        border-bottom-color: var(--wc-border-dark) !important;
+        color: var(--wc-text-dark) !important;
+    }
+
+    /* Close button */
+    [wirechat] [class*="modal-close"],
+    [wirechat] [class*="close-button"],
+    [wirechat] button[aria-label*="close"],
+    [wirechat] button[aria-label*="Close"] {
+        position: absolute !important;
+        top: 1rem !important;
+        right: 1rem !important;
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 50% !important;
+        background: var(--wc-surface) !important;
+        border: 1px solid var(--wc-border) !important;
+        color: var(--wc-text-secondary) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        transition: all 0.15s ease !important;
+        z-index: 10 !important;
+    }
+
+    [wirechat] [class*="modal-close"]:hover,
+    [wirechat] [class*="close-button"]:hover {
+        background: var(--wc-primary-light) !important;
+        border-color: var(--wc-primary) !important;
+        color: var(--wc-primary) !important;
+        transform: scale(1.1) !important;
+    }
+
+    .dark [wirechat] [class*="modal-close"],
+    .dark [wirechat] [class*="close-button"] {
+        background: var(--wc-surface-dark) !important;
+        border-color: var(--wc-border-dark) !important;
+        color: var(--wc-text-muted) !important;
+    }
+
+    /* Modal body */
+    [wirechat] [class*="modal-body"],
+    [wirechat] [class*="dialog-body"],
+    [wirechat] [role="dialog"] > div > div:not([class*="header"]) {
+        padding: 1rem 1.5rem !important;
+        overflow-y: auto !important;
+        flex: 1 !important;
+    }
+
+    /* Search input in modal - Only Wirechat modals */
+    [wirechat] [role="dialog"] input[type="search"],
+    [wirechat] [role="dialog"] input[type="text"][placeholder*="Search"],
+    [wirechat] [class*="modal"] input[type="search"],
+    [wirechat] [class*="modal"] input[type="text"] {
+        width: 100% !important;
+        padding: 0.75rem 1rem 0.75rem 2.75rem !important;
+        border: 1.5px solid var(--wc-border) !important;
+        border-radius: 0.75rem !important;
+        background: var(--wc-surface) !important;
+        font-size: 0.9375rem !important;
+        color: var(--wc-text) !important;
+        margin-bottom: 1rem !important;
+        transition: all 0.15s ease !important;
+    }
+
+    [wirechat] [role="dialog"] input[type="search"]:focus,
+    [wirechat] [role="dialog"] input[type="text"]:focus,
+    [wirechat] [class*="modal"] input[type="search"]:focus {
+        outline: none !important;
+        border-color: var(--wc-primary) !important;
+        background: var(--wc-bg) !important;
+        box-shadow: 0 0 0 3px var(--wc-primary-light) !important;
+    }
+
+    .dark [wirechat] [role="dialog"] input[type="search"],
+    .dark [wirechat] [class*="modal"] input[type="search"] {
+        background: var(--wc-surface-dark) !important;
+        border-color: var(--wc-border-dark) !important;
+        color: var(--wc-text-dark) !important;
+    }
+
+    /* User list in modal - Only Wirechat modals */
+    [wirechat] [role="dialog"] [class*="user-list"],
+    [wirechat] [role="dialog"] [class*="user-item"],
+    [wirechat] [class*="modal"] [class*="user-list"] > *,
+    [wirechat] [class*="modal"] [role="listitem"] {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.75rem !important;
+        padding: 0.875rem 1rem !important;
+        margin: 0.25rem 0 !important;
+        border-radius: 0.75rem !important;
+        cursor: pointer !important;
+        background: transparent !important;
+        border: 1px solid transparent !important;
+        transition: all 0.15s ease !important;
+    }
+
+    [wirechat] [role="dialog"] [class*="user-item"]:hover,
+    [wirechat] [class*="modal"] [role="listitem"]:hover {
+        background: var(--wc-surface) !important;
+        border-color: var(--wc-border) !important;
+        transform: translateX(4px) !important;
+    }
+
+    .dark [wirechat] [role="dialog"] [class*="user-item"]:hover,
+    .dark [wirechat] [class*="modal"] [role="listitem"]:hover {
+        background: var(--wc-surface-dark) !important;
+        border-color: var(--wc-border-dark) !important;
+    }
+
+    /* User avatar in modal */
+    [wirechat] [role="dialog"] img[class*="avatar"],
+    [wirechat] [class*="modal"] img[class*="avatar"],
+    [wirechat] [role="dialog"] [class*="avatar"] img {
+        width: 48px !important;
+        height: 48px !important;
+        border-radius: 50% !important;
+        border: 2px solid var(--wc-border) !important;
+        object-fit: cover !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* User name in modal */
+    [wirechat] [role="dialog"] [class*="user-name"],
+    [wirechat] [class*="modal"] [class*="user-name"],
+    [wirechat] [role="dialog"] strong {
+        font-weight: 500 !important;
+        font-size: 0.9375rem !important;
+        color: var(--wc-text) !important;
+        margin: 0 !important;
+    }
+
+    .dark [wirechat] [role="dialog"] [class*="user-name"],
+    .dark [wirechat] [role="dialog"] strong {
+        color: var(--wc-text-dark) !important;
+    }
+
+    /* Empty state in modal */
+    [wirechat] [role="dialog"] [class*="empty"],
+    [wirechat] [class*="modal"] [class*="empty-state"],
+    [wirechat] [role="dialog"] [class*="no-results"] {
+        padding: 2rem 1rem !important;
+        text-align: center !important;
+        color: var(--wc-text-secondary) !important;
+    }
+
+    .dark [wirechat] [role="dialog"] [class*="empty"] {
+        color: var(--wc-text-muted) !important;
+    }
+
+    /* Modal footer/actions */
+    [wirechat] [role="dialog"] [class*="modal-footer"],
+    [wirechat] [role="dialog"] [class*="dialog-footer"],
+    [wirechat] [class*="modal"] [class*="actions"] {
+        padding: 1rem 1.5rem 1.5rem 1.5rem !important;
+        border-top: 1px solid var(--wc-border) !important;
+        display: flex !important;
+        gap: 0.75rem !important;
+        justify-content: flex-end !important;
+        background: transparent !important;
+    }
+
+    .dark [wirechat] [role="dialog"] [class*="modal-footer"] {
+        border-top-color: var(--wc-border-dark) !important;
+    }
+
+    /* Buttons in modal */
+    [wirechat] [role="dialog"] button[type="button"]:not([class*="close"]),
+    [wirechat] [class*="modal"] button:not([class*="close"]) {
+        padding: 0.625rem 1.25rem !important;
+        border-radius: 0.75rem !important;
+        font-weight: 500 !important;
+        font-size: 0.9375rem !important;
+        transition: all 0.15s ease !important;
+    }
+
+    [wirechat] [role="dialog"] button[type="submit"],
+    [wirechat] [class*="modal"] button[type="submit"],
+    [wirechat] [role="dialog"] button[class*="primary"] {
+        background: var(--wc-primary) !important;
+        color: white !important;
+        border: none !important;
+    }
+
+    [wirechat] [role="dialog"] button[type="submit"]:hover,
+    [wirechat] [class*="modal"] button[type="submit"]:hover {
+        background: var(--wc-primary-hover) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3) !important;
+    }
+
+    [wirechat] [role="dialog"] button[type="button"]:not([type="submit"]):not([class*="close"]) {
+        background: var(--wc-surface) !important;
+        color: var(--wc-text) !important;
+        border: 1px solid var(--wc-border) !important;
+    }
+
+    [wirechat] [role="dialog"] button[type="button"]:not([type="submit"]):not([class*="close"]):hover {
+        background: var(--wc-primary-light) !important;
+        border-color: var(--wc-primary) !important;
+        color: var(--wc-primary) !important;
+    }
+
+    .dark [wirechat] [role="dialog"] button[type="button"]:not([type="submit"]):not([class*="close"]) {
+        background: var(--wc-surface-dark) !important;
+        border-color: var(--wc-border-dark) !important;
+        color: var(--wc-text-dark) !important;
+    }
+
+    /* Loading state in modal */
+    [wirechat] [role="dialog"] [class*="loading"],
+    [wirechat] [class*="modal"] [class*="spinner"] {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 2rem !important;
+    }
+
+    /* Scrollbar in modal */
+    [wirechat] [role="dialog"] ::-webkit-scrollbar,
+    [wirechat] [class*="modal"] ::-webkit-scrollbar {
+        width: 6px !important;
+    }
+
+    [wirechat] [role="dialog"] ::-webkit-scrollbar-thumb {
+        background: var(--wc-border) !important;
+        border-radius: 3px !important;
+    }
+
+    .dark [wirechat] [role="dialog"] ::-webkit-scrollbar-thumb {
+        background: var(--wc-border-dark) !important;
+    }
+
+    /* Animation for modal */
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    [wirechat] [role="dialog"] > div,
+    [wirechat] [class*="modal-content"] {
+        animation: modalFadeIn 0.2s ease-out !important;
+    }
+
+    /* ============================================
+       Filament Modal System - Wirechat Integration
+       ============================================ */
+    
+    /* Filament modal overlay */
+    .fi-modal-overlay {
+        background: rgba(0, 0, 0, 0.5) !important;
+        backdrop-filter: blur(4px) !important;
+    }
+
+    /* Filament modal container */
+    .fi-modal-container,
+    .fi-modal {
+        background: var(--wc-bg) !important;
+        border-radius: 1.5rem !important;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+        border: 1px solid var(--wc-border) !important;
+        max-width: 500px !important;
+        width: 90% !important;
+        overflow: hidden !important;
+    }
+
+    .dark .fi-modal-container,
+    .dark .fi-modal {
+        background: var(--wc-bg-dark) !important;
+        border-color: var(--wc-border-dark) !important;
+    }
+
+    /* Filament modal content */
+    .fi-modal-content {
+        padding: 1.5rem !important;
+    }
+
+    /* Filament modal header */
+    .fi-modal-header {
+        padding: 1.5rem 1.5rem 1rem 1.5rem !important;
+        border-bottom: 1px solid var(--wc-border) !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .dark .fi-modal-header {
+        border-bottom-color: var(--wc-border-dark) !important;
+    }
+
+    /* Filament modal close button */
+    .fi-modal-close,
+    .fi-icon-btn[aria-label*="close"] {
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 50% !important;
+        background: var(--wc-surface) !important;
+        border: 1px solid var(--wc-border) !important;
+        color: var(--wc-text-secondary) !important;
+        transition: all 0.15s ease !important;
+    }
+
+    .fi-modal-close:hover,
+    .fi-icon-btn[aria-label*="close"]:hover {
+        background: var(--wc-primary-light) !important;
+        border-color: var(--wc-primary) !important;
+        color: var(--wc-primary) !important;
+        transform: scale(1.1) !important;
+    }
+
+    /* ============================================
+       Universal Modal Detection - Most Aggressive
+       ============================================ */
+    
+    /* Target modals that appear outside [wirechat] but contain search inputs */
+    body > [style*="position: fixed"]:has(input[type="search"]),
+    body > [style*="position: fixed"]:has(input[placeholder*="Search"]),
+    body > [style*="position: fixed"]:has(input[placeholder*="search"]) {
+        background: rgba(0, 0, 0, 0.5) !important;
+        backdrop-filter: blur(4px) !important;
+        z-index: 9999 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* Style the content div inside fixed modals with search */
+    body > [style*="position: fixed"]:has(input[type="search"]) > div,
+    body > [style*="position: fixed"]:has(input[placeholder*="Search"]) > div,
+    body > [style*="position: fixed"]:has(input[placeholder*="search"]) > div {
+        background: #ffffff !important;
+        border-radius: 1.5rem !important;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+        border: 1px solid #e2e8f0 !important;
+        max-width: 500px !important;
+        width: 90% !important;
+        max-height: 85vh !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        margin: auto !important;
+        position: relative !important;
+        padding: 1.5rem !important;
+    }
+
+    /* Dark mode support */
+    .dark body > [style*="position: fixed"]:has(input[type="search"]) > div {
+        background: #0f172a !important;
+        border-color: #334155 !important;
+    }
+
+    /* Style search inputs in these modals */
+    body > [style*="position: fixed"]:has(input[type="search"]) input[type="search"],
+    body > [style*="position: fixed"]:has(input[placeholder*="Search"]) input[type="search"],
+    body > [style*="position: fixed"]:has(input[placeholder*="Search"]) input[type="text"] {
+        width: 100% !important;
+        padding: 0.75rem 1rem 0.75rem 2.75rem !important;
+        border: 1.5px solid #e2e8f0 !important;
+        border-radius: 0.75rem !important;
+        background: #f8fafc !important;
+        font-size: 0.9375rem !important;
+        color: #1e293b !important;
+        margin-bottom: 1rem !important;
+        transition: all 0.15s ease !important;
+    }
+
+    body > [style*="position: fixed"]:has(input[type="search"]) input[type="search"]:focus {
+        outline: none !important;
+        border-color: #f59e0b !important;
+        background: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1) !important;
+    }
+
+    /* ============================================
+       Ultra-Aggressive Modal Styling - Highest Priority
+       ============================================ */
+    
+    /* Target ANY element that is fixed and contains search - highest specificity */
+    body > div[style*="position: fixed"]:has(input),
+    body > div[style*="position: fixed"]:has(input[type="search"]),
+    html body > div[style*="position: fixed"]:has(input[placeholder*="Search"]) {
+        background: rgba(0, 0, 0, 0.5) !important;
+        backdrop-filter: blur(4px) !important;
+        z-index: 99999 !important;
+    }
+
+    /* Force white background on ANY div inside fixed modal */
+    body > div[style*="position: fixed"] > div,
+    body > div[style*="position: fixed"] > div > div,
+    html body > div[style*="position: fixed"]:has(input) > div,
+    body > div[style*="position: fixed"] div:has(input[type="search"]),
+    body > div[style*="position: fixed"] div:has(input[placeholder*="Search"]) {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    
+    /* Target ALL children of fixed modal that might be the content */
+    body > div[style*="position: fixed"]:has(input) * {
+        background: inherit !important;
+    }
+    
+    /* But force white on the main container */
+    body > div[style*="position: fixed"]:has(input) > *:first-child,
+    body > div[style*="position: fixed"]:has(input) > *:nth-child(1) {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        opacity: 1 !important;
+    }
+
+    /* Override any transparent or rgba backgrounds */
+    [style*="background: transparent"],
+    [style*="background-color: transparent"],
+    [style*="background: rgba(0, 0, 0, 0)"],
+    [style*="background-color: rgba(0, 0, 0, 0)"] {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+    }
+
+    /* But only if it's inside a fixed modal with search */
+    body > div[style*="position: fixed"]:has(input) [style*="background: transparent"],
+    body > div[style*="position: fixed"]:has(input) [style*="background-color: transparent"] {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+    }
+
 </style>
+
+<script>
+    // Aggressive Wirechat Modal Styling
+    (function() {
+        'use strict';
+        
+        function findAndStyleModal() {
+            // Method 1: Find by fixed position + search input
+            const allElements = document.querySelectorAll('*');
+            let modalFound = false;
+            
+            allElements.forEach(element => {
+                const computedStyle = window.getComputedStyle(element);
+                const isFixed = computedStyle.position === 'fixed';
+                const hasSearch = element.querySelector('input[type="search"], input[placeholder*="Search"], input[placeholder*="search"], input[placeholder*="Type"]');
+                
+                if (isFixed && hasSearch && !element.dataset.wirechatProcessed) {
+                    modalFound = true;
+                    element.dataset.wirechatProcessed = 'true';
+                    
+                    // Style backdrop
+                    element.style.setProperty('background', 'rgba(0, 0, 0, 0.5)', 'important');
+                    element.style.setProperty('backdrop-filter', 'blur(4px)', 'important');
+                    element.style.setProperty('z-index', '9999', 'important');
+                    element.style.setProperty('display', 'flex', 'important');
+                    element.style.setProperty('align-items', 'center', 'important');
+                    element.style.setProperty('justify-content', 'center', 'important');
+                    element.style.setProperty('top', '0', 'important');
+                    element.style.setProperty('left', '0', 'important');
+                    element.style.setProperty('right', '0', 'important');
+                    element.style.setProperty('bottom', '0', 'important');
+                    
+                    // Find content container - try multiple methods
+                    let contentContainer = null;
+                    
+                    // Method 1: Direct child with search
+                    Array.from(element.children).forEach(child => {
+                        if (child.querySelector && (child.querySelector('input[type="search"]') || child.querySelector('input[placeholder*="Search"]'))) {
+                            contentContainer = child;
+                        }
+                    });
+                    
+                    // Method 2: Any div with search input
+                    if (!contentContainer) {
+                        const divsWithSearch = element.querySelectorAll('div');
+                        divsWithSearch.forEach(div => {
+                            if (div.querySelector('input[type="search"]') || div.querySelector('input[placeholder*="Search"]')) {
+                                if (!contentContainer || div.offsetHeight > contentContainer.offsetHeight) {
+                                    contentContainer = div;
+                                }
+                            }
+                        });
+                    }
+                    
+                    // Method 3: First div child
+                    if (!contentContainer && element.children.length > 0) {
+                        contentContainer = element.children[0];
+                    }
+                    
+                    // Force white background on ALL possible containers BEFORE checking contentContainer
+                    // First, force on direct children
+                    Array.from(element.children).forEach(child => {
+                        const computedBg = window.getComputedStyle(child).backgroundColor;
+                        const hasSearch = child.querySelector && (child.querySelector('input[type="search"]') || child.querySelector('input[placeholder*="Search"]'));
+                        
+                        if (hasSearch || computedBg === 'rgba(0, 0, 0, 0)' || computedBg === 'transparent' || !computedBg) {
+                            child.style.setProperty('background', '#ffffff', 'important');
+                            child.style.setProperty('background-color', '#ffffff', 'important');
+                            child.style.setProperty('background-image', 'none', 'important');
+                            child.style.setProperty('opacity', '1', 'important');
+                            child.style.setProperty('visibility', 'visible', 'important');
+                            child.style.setProperty('border-radius', '1.5rem', 'important');
+                            child.style.setProperty('padding', '1.5rem', 'important');
+                            child.style.setProperty('box-shadow', '0 20px 25px -5px rgba(0, 0, 0, 0.1)', 'important');
+                            child.style.setProperty('border', '1px solid #e2e8f0', 'important');
+                            if (hasSearch) {
+                                child.style.setProperty('max-width', '500px', 'important');
+                                child.style.setProperty('width', '90%', 'important');
+                            }
+                        }
+                    });
+                    
+                    // Also force on any div containing search
+                    const allDivs = element.querySelectorAll('div');
+                    allDivs.forEach(div => {
+                        if (div.querySelector('input[type="search"]') || div.querySelector('input[placeholder*="Search"]')) {
+                            div.style.setProperty('background', '#ffffff', 'important');
+                            div.style.setProperty('background-color', '#ffffff', 'important');
+                            div.style.setProperty('background-image', 'none', 'important');
+                            div.style.setProperty('opacity', '1', 'important');
+                            div.style.setProperty('visibility', 'visible', 'important');
+                        }
+                    });
+                    
+                    if (contentContainer) {
+                        // Force white background - always apply, even if already styled
+                        contentContainer.style.setProperty('background', '#ffffff', 'important');
+                        contentContainer.style.setProperty('background-color', '#ffffff', 'important');
+                        contentContainer.style.setProperty('background-image', 'none', 'important');
+                        contentContainer.style.setProperty('border-radius', '1.5rem', 'important');
+                        contentContainer.style.setProperty('box-shadow', '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)', 'important');
+                        contentContainer.style.setProperty('border', '1px solid #e2e8f0', 'important');
+                        contentContainer.style.setProperty('max-width', '500px', 'important');
+                        contentContainer.style.setProperty('width', '90%', 'important');
+                        contentContainer.style.setProperty('max-height', '85vh', 'important');
+                        contentContainer.style.setProperty('overflow', 'hidden', 'important');
+                        contentContainer.style.setProperty('display', 'flex', 'important');
+                        contentContainer.style.setProperty('flex-direction', 'column', 'important');
+                        contentContainer.style.setProperty('margin', 'auto', 'important');
+                        contentContainer.style.setProperty('position', 'relative', 'important');
+                        contentContainer.style.setProperty('padding', '1.5rem', 'important');
+                        contentContainer.style.setProperty('opacity', '1', 'important');
+                        contentContainer.style.setProperty('visibility', 'visible', 'important');
+                        contentContainer.style.setProperty('z-index', '10000', 'important');
+                        
+                        // Also force white on all direct children that might be transparent
+                        Array.from(contentContainer.children).forEach(child => {
+                            const childBg = window.getComputedStyle(child).backgroundColor;
+                            if (!childBg || childBg === 'rgba(0, 0, 0, 0)' || childBg === 'transparent') {
+                                child.style.setProperty('background', '#ffffff', 'important');
+                                child.style.setProperty('background-color', '#ffffff', 'important');
+                            }
+                        });
+                        
+                        if (!contentContainer.dataset.wirechatStyled) {
+                            contentContainer.dataset.wirechatStyled = 'true';
+                        }
+                        
+                        // Style all inputs
+                        const allInputs = contentContainer.querySelectorAll('input');
+                        allInputs.forEach(input => {
+                            if (input.type === 'search' || input.placeholder && input.placeholder.toLowerCase().includes('search')) {
+                                input.style.setProperty('width', '100%', 'important');
+                                input.style.setProperty('padding', '0.75rem 1rem 0.75rem 2.75rem', 'important');
+                                input.style.setProperty('border', '1.5px solid #e2e8f0', 'important');
+                                input.style.setProperty('border-radius', '0.75rem', 'important');
+                                input.style.setProperty('background', '#f8fafc', 'important');
+                                input.style.setProperty('background-color', '#f8fafc', 'important');
+                                input.style.setProperty('font-size', '0.9375rem', 'important');
+                                input.style.setProperty('color', '#1e293b', 'important');
+                                input.style.setProperty('margin-bottom', '1rem', 'important');
+                            }
+                        });
+                        
+                        // Style user list items
+                        const allDivs = contentContainer.querySelectorAll('div');
+                        allDivs.forEach(div => {
+                            const hasAvatar = div.querySelector('img[class*="avatar"], img[alt*="avatar"]');
+                            const hasStrong = div.querySelector('strong');
+                            
+                            if (hasAvatar || (hasStrong && div.querySelector('img'))) {
+                                div.style.setProperty('display', 'flex', 'important');
+                                div.style.setProperty('align-items', 'center', 'important');
+                                div.style.setProperty('gap', '0.75rem', 'important');
+                                div.style.setProperty('padding', '0.875rem 1rem', 'important');
+                                div.style.setProperty('margin', '0.25rem 0', 'important');
+                                div.style.setProperty('border-radius', '0.75rem', 'important');
+                                div.style.setProperty('cursor', 'pointer', 'important');
+                                div.style.setProperty('background', 'transparent', 'important');
+                                div.style.setProperty('border', '1px solid transparent', 'important');
+                                
+                                div.addEventListener('mouseenter', function() {
+                                    this.style.setProperty('background', '#f8fafc', 'important');
+                                    this.style.setProperty('border-color', '#e2e8f0', 'important');
+                                    this.style.setProperty('transform', 'translateX(4px)', 'important');
+                                });
+                                
+                                div.addEventListener('mouseleave', function() {
+                                    this.style.setProperty('background', 'transparent', 'important');
+                                    this.style.setProperty('border-color', 'transparent', 'important');
+                                    this.style.setProperty('transform', 'translateX(0)', 'important');
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+            
+            return modalFound;
+        }
+        
+        // Run immediately
+        findAndStyleModal();
+        
+        // Run on DOM ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', findAndStyleModal);
+        }
+        
+        // Aggressive mutation observer
+        const observer = new MutationObserver(function() {
+            setTimeout(findAndStyleModal, 50);
+        });
+        
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style', 'class']
+        });
+        
+        // Very frequent check as fallback
+        setInterval(findAndStyleModal, 200);
+        
+        // Also listen for click events that might open modals
+        document.addEventListener('click', function(e) {
+            setTimeout(findAndStyleModal, 100);
+            setTimeout(findAndStyleModal, 300);
+            setTimeout(findAndStyleModal, 500);
+            setTimeout(findAndStyleModal, 800);
+        });
+        
+        // Listen for Livewire/Alpine events
+        window.addEventListener('livewire:load', findAndStyleModal);
+        window.addEventListener('livewire:update', findAndStyleModal);
+        document.addEventListener('alpine:init', findAndStyleModal);
+        
+        // Ultra-aggressive override - force white background constantly
+        const styleOverride = setInterval(function() {
+            // Find all fixed position elements
+            const allElements = document.querySelectorAll('*');
+            allElements.forEach(element => {
+                const computedStyle = window.getComputedStyle(element);
+                if (computedStyle.position === 'fixed') {
+                    const hasSearch = element.querySelector('input[type="search"], input[placeholder*="Search"], input[placeholder*="search"]');
+                    
+                    if (hasSearch) {
+                        // Force backdrop
+                        element.style.setProperty('background', 'rgba(0, 0, 0, 0.5)', 'important');
+                        element.style.setProperty('backdrop-filter', 'blur(4px)', 'important');
+                        element.style.setProperty('z-index', '99999', 'important');
+                        
+                        // Force white on ALL divs inside
+                        const allDivs = element.querySelectorAll('div');
+                        allDivs.forEach(div => {
+                            const divBg = window.getComputedStyle(div).backgroundColor;
+                            const hasSearchInput = div.querySelector('input[type="search"], input[placeholder*="Search"]');
+                            
+                            // If it has search OR is transparent, make it white
+                            if (hasSearchInput || divBg === 'rgba(0, 0, 0, 0)' || divBg === 'transparent' || !divBg) {
+                                div.style.setProperty('background', '#ffffff', 'important');
+                                div.style.setProperty('background-color', '#ffffff', 'important');
+                                div.style.setProperty('background-image', 'none', 'important');
+                                div.style.setProperty('opacity', '1', 'important');
+                                div.style.setProperty('visibility', 'visible', 'important');
+                                
+                                // Add styling if it's the main container
+                                if (hasSearchInput) {
+                                    div.style.setProperty('border-radius', '1.5rem', 'important');
+                                    div.style.setProperty('padding', '1.5rem', 'important');
+                                    div.style.setProperty('box-shadow', '0 20px 25px -5px rgba(0, 0, 0, 0.1)', 'important');
+                                    div.style.setProperty('border', '1px solid #e2e8f0', 'important');
+                                    div.style.setProperty('max-width', '500px', 'important');
+                                    div.style.setProperty('width', '90%', 'important');
+                                }
+                            }
+                        });
+                        
+                        // Also check direct children
+                        Array.from(element.children).forEach(child => {
+                            const childBg = window.getComputedStyle(child).backgroundColor;
+                            const hasSearchInput = child.querySelector && (child.querySelector('input[type="search"]') || child.querySelector('input[placeholder*="Search"]'));
+                            
+                            if (hasSearchInput || childBg === 'rgba(0, 0, 0, 0)' || childBg === 'transparent' || !childBg) {
+                                child.style.setProperty('background', '#ffffff', 'important');
+                                child.style.setProperty('background-color', '#ffffff', 'important');
+                                child.style.setProperty('background-image', 'none', 'important');
+                                child.style.setProperty('opacity', '1', 'important');
+                                child.style.setProperty('visibility', 'visible', 'important');
+                                
+                                if (hasSearchInput) {
+                                    child.style.setProperty('border-radius', '1.5rem', 'important');
+                                    child.style.setProperty('padding', '1.5rem', 'important');
+                                    child.style.setProperty('box-shadow', '0 20px 25px -5px rgba(0, 0, 0, 0.1)', 'important');
+                                    child.style.setProperty('border', '1px solid #e2e8f0', 'important');
+                                    child.style.setProperty('max-width', '500px', 'important');
+                                    child.style.setProperty('width', '90%', 'important');
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }, 50);
+    })();
+</script>

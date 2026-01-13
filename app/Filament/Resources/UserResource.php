@@ -117,8 +117,70 @@ class UserResource extends Resource
                     ->label(__('app.type'))
                     ->options([
                         'admin' => __('app.admin'),
-                    ]),
-            ])
+                        'hr' => __('app.hr'),
+                        'candidate' => __('app.candidate'),
+                    ])
+                    ->multiple(),
+                Tables\Filters\Filter::make('name')
+                    ->label(__('common.name'))
+                    ->form([
+                        Forms\Components\TextInput::make('name')
+                            ->label(__('common.name'))
+                            ->placeholder(__('app.search_name')),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query->when(
+                            $data['name'],
+                            fn ($query, $name) => $query->where('name', 'like', "%{$name}%")
+                        );
+                    }),
+                Tables\Filters\Filter::make('email')
+                    ->label(__('app.email_address'))
+                    ->form([
+                        Forms\Components\TextInput::make('email')
+                            ->label(__('app.email_address'))
+                            ->placeholder(__('app.search_email')),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query->when(
+                            $data['email'],
+                            fn ($query, $email) => $query->where('email', 'like', "%{$email}%")
+                        );
+                    }),
+                Tables\Filters\Filter::make('email_verified')
+                    ->label(__('app.email_verified'))
+                    ->query(fn ($query) => $query->whereNotNull('email_verified_at'))
+                    ->toggle(),
+                Tables\Filters\Filter::make('has_roles')
+                    ->label(__('app.has_roles'))
+                    ->query(fn ($query) => $query->whereHas('roles'))
+                    ->toggle(),
+                Tables\Filters\SelectFilter::make('roles')
+                    ->label(__('app.roles'))
+                    ->relationship('roles', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->multiple(),
+                Tables\Filters\Filter::make('created_at')
+                    ->label(__('app.created_at'))
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from')
+                            ->label(__('app.from_date')),
+                        Forms\Components\DatePicker::make('created_to')
+                            ->label(__('app.to_date')),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn ($query, $date) => $query->whereDate('created_at', '>=', $date)
+                            )
+                            ->when(
+                                $data['created_to'],
+                                fn ($query, $date) => $query->whereDate('created_at', '<=', $date)
+                            );
+                    }),
+            ], layout: Tables\Enums\FiltersLayout::AboveContentCollapsible)
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
