@@ -85,4 +85,175 @@
         background: rgba(15, 23, 42, 0.95) !important;
         border-bottom-color: rgba(20, 184, 166, 0.3) !important;
     }
+
+    /* Hide any logo in topbar */
+    .fi-topbar-brand-logo,
+    .fi-topbar [class*="logo"] img {
+        display: none !important;
+    }
+
+    /* Hide Laravel brand name in sidebar */
+    .fi-sidebar [class*="brand"],
+    .fi-sidebar [class*="logo"] span,
+    .fi-sidebar a[href*="dashboard"] span:not(.fi-icon),
+    .fi-sidebar-header [class*="brand"],
+    .fi-sidebar-header [class*="logo"],
+    .fi-sidebar [class*="header"] span:contains("Laravel"),
+    .fi-sidebar [class*="header"] a:contains("Laravel") {
+        display: none !important;
+    }
+
+    /* Style sidebar logo container */
+    .fi-sidebar-header,
+    .fi-sidebar [class*="header"] {
+        padding: 1rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* Sidebar logo styling */
+    .fi-sidebar-logo-custom {
+        height: 180px !important;
+        width: auto !important;
+        object-fit: contain !important;
+        display: block !important;
+    }
 </style>
+
+<script>
+// Remove any logo from topbar
+(function() {
+    function removeTopbarLogo() {
+        const topbar = document.querySelector('.fi-topbar');
+        if (!topbar) return;
+
+        // Remove any logo images
+        const logoImages = topbar.querySelectorAll('.fi-topbar-brand-logo, img[alt*="Job Seeker"], img[alt*="Logo"]');
+        logoImages.forEach(img => {
+            img.remove();
+        });
+
+        // Restore default brand text if it was replaced
+        const brandElements = topbar.querySelectorAll('[class*="brand"], a[href*="dashboard"]');
+        brandElements.forEach(el => {
+            if (el.querySelector('.fi-topbar-brand-logo')) {
+                // Restore original content or default text
+                if (el.textContent.trim() === '' || el.querySelector('img')) {
+                    el.innerHTML = 'Laravel';
+                }
+            }
+        });
+    }
+
+    // Run on page load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', removeTopbarLogo);
+    } else {
+        removeTopbarLogo();
+    }
+
+    // Also try after delays
+    setTimeout(removeTopbarLogo, 300);
+    setTimeout(removeTopbarLogo, 1000);
+
+    // Watch for navigation changes
+    window.addEventListener('livewire:navigate', removeTopbarLogo);
+    window.addEventListener('livewire:update', removeTopbarLogo);
+})();
+
+// Add logo to sidebar and remove Laravel text
+(function() {
+    function setupSidebarLogo() {
+        const sidebar = document.querySelector('.fi-sidebar');
+        if (!sidebar) return;
+
+        // Find sidebar header
+        const headerSelectors = [
+            '[class*="header"]',
+            '[class*="brand"]',
+            'a[href*="dashboard"]',
+            '.fi-sidebar > div:first-child',
+            '.fi-sidebar > a:first-child'
+        ];
+
+        let headerElement = null;
+        for (const selector of headerSelectors) {
+            const elements = sidebar.querySelectorAll(selector);
+            for (const el of elements) {
+                if (el.closest('.fi-sidebar') && (el.textContent.includes('Laravel') || el.closest('.fi-sidebar') === sidebar)) {
+                    headerElement = el;
+                    break;
+                }
+            }
+            if (headerElement) break;
+        }
+
+        // Fallback: use first child of sidebar
+        if (!headerElement) {
+            headerElement = sidebar.querySelector('> div:first-child, > a:first-child');
+        }
+
+        if (headerElement && !headerElement.querySelector('.fi-sidebar-logo-custom')) {
+            // Hide Laravel text
+            const allElements = headerElement.querySelectorAll('*');
+            allElements.forEach(el => {
+                if (el.textContent && el.textContent.trim() === 'Laravel') {
+                    el.style.display = 'none';
+                }
+            });
+
+            // Hide direct text nodes
+            const walker = document.createTreeWalker(
+                headerElement,
+                NodeFilter.SHOW_TEXT,
+                null,
+                false
+            );
+
+            let node;
+            while (node = walker.nextNode()) {
+                if (node.textContent.trim() === 'Laravel') {
+                    node.parentElement.style.display = 'none';
+                }
+            }
+
+            // Create and add logo
+            const logoImg = document.createElement('img');
+            logoImg.src = '{{ asset("storage/WhatsApp_Image_2026-01-18_at_17.29.19-removebg-preview.png") }}';
+            logoImg.alt = 'Job Seeker Hub Logo';
+            logoImg.className = 'fi-sidebar-logo-custom';
+
+            // Clear existing content and add logo
+            const existingContent = headerElement.innerHTML;
+            headerElement.innerHTML = '';
+            headerElement.appendChild(logoImg);
+
+            // Make it a link to dashboard if it's not already
+            if (headerElement.tagName !== 'A') {
+                const link = document.createElement('a');
+                link.href = headerElement.getAttribute('href') || '/admin';
+                link.className = headerElement.className;
+                link.style.cssText = headerElement.style.cssText;
+                link.appendChild(logoImg);
+                headerElement.parentNode.replaceChild(link, headerElement);
+            }
+        }
+    }
+
+    // Run on page load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupSidebarLogo);
+    } else {
+        setupSidebarLogo();
+    }
+
+    // Also try after delays
+    setTimeout(setupSidebarLogo, 300);
+    setTimeout(setupSidebarLogo, 1000);
+
+    // Watch for navigation changes
+    window.addEventListener('livewire:navigate', setupSidebarLogo);
+    window.addEventListener('livewire:update', setupSidebarLogo);
+})();
+</script>

@@ -156,5 +156,22 @@ return [
     
     // Chat
     'chat' => 'Chat',
+    'welcome_to_chat' => 'Welcome to Chat',
+    'select_conversation_to_start' => 'Select a conversation from the list to start messaging, or search for someone to start a new chat.',
+    'tip' => 'Tip',
+    'use_search_to_find_contacts' => 'Use the search bar to find and start conversations with your contacts.',
+    'back' => 'Back',
+    
+    // Error Messages
+    'error' => 'Error',
+    'candidate_profile_not_found' => 'Candidate profile not found. Please complete your profile first.',
+    'already_applied' => 'Already Applied',
+    'you_have_already_applied_for_this_job' => 'You have already applied for this job. Please check your applications.',
+    'job_not_accepting_applications' => 'Job Not Accepting Applications',
+    'this_job_is_no_longer_accepting_applications' => 'This job is no longer accepting applications. It may have been closed or filled.',
+    'application_deadline_passed' => 'Application Deadline Passed',
+    'the_application_deadline_for_this_job_has_passed' => 'The application deadline for this job has passed on :deadline. Please look for other available opportunities.',
+    'resume_required' => 'Resume Required',
+    'please_use_profile_resume_or_upload_new_one' => 'Please either use your profile resume or upload a new one to complete your application.',
 ];
 

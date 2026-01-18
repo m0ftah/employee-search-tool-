@@ -155,5 +155,22 @@ return [
     
     // Chat
     'chat' => 'محادثة',
+    'welcome_to_chat' => 'مرحباً بك في المحادثة',
+    'select_conversation_to_start' => 'اختر محادثة من القائمة لبدء المراسلة، أو ابحث عن شخص لبدء محادثة جديدة.',
+    'tip' => 'نصيحة',
+    'use_search_to_find_contacts' => 'استخدم شريط البحث للعثور على جهات الاتصال وبدء المحادثات معهم.',
+    'back' => 'رجوع',
+    
+    // Error Messages
+    'error' => 'خطأ',
+    'candidate_profile_not_found' => 'لم يتم العثور على ملف المرشح الشخصي. يرجى إكمال ملفك الشخصي أولاً.',
+    'already_applied' => 'تم التقديم مسبقاً',
+    'you_have_already_applied_for_this_job' => 'لقد تقدمت بالفعل لهذه الوظيفة. يرجى التحقق من طلباتك.',
+    'job_not_accepting_applications' => 'الوظيفة لا تقبل الطلبات',
+    'this_job_is_no_longer_accepting_applications' => 'هذه الوظيفة لم تعد تقبل الطلبات. قد تكون مغلقة أو تم شغلها.',
+    'application_deadline_passed' => 'انتهى الموعد النهائي للتقديم',
+    'the_application_deadline_for_this_job_has_passed' => 'انتهى الموعد النهائي للتقديم لهذه الوظيفة في :deadline. يرجى البحث عن فرص أخرى متاحة.',
+    'resume_required' => 'السيرة الذاتية مطلوبة',
+    'please_use_profile_resume_or_upload_new_one' => 'يرجى استخدام سيرتك الذاتية من الملف الشخصي أو رفع سيرة ذاتية جديدة لإكمال طلبك.',
 ];
 

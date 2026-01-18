@@ -127,7 +127,7 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->label(__('common.name'))
                             ->placeholder(__('app.search_name')),
-                    ])
+            ])
                     ->query(function ($query, array $data) {
                         return $query->when(
                             $data['name'],

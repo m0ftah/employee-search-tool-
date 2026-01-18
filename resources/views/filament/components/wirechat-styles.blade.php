@@ -2,13 +2,77 @@
 
 <style>
     /* ============================================
+       Back Button - Beside "Chats" Header
+       ============================================ */
+    
+    /* Back button container - positioned in header */
+    [wirechat] .wirechat-back-button {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+        padding: 0.5rem 0.75rem !important;
+        background: transparent !important;
+        border: 1.5px solid var(--wc-border) !important;
+        border-radius: 0.5rem !important;
+        color: var(--wc-text-secondary) !important;
+        text-decoration: none !important;
+        font-size: 0.875rem !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+        margin-right: 0.75rem !important;
+    }
+    
+    [wirechat] .wirechat-back-button:hover {
+        background: var(--wc-surface) !important;
+        border-color: var(--wc-primary) !important;
+        color: var(--wc-primary) !important;
+        transform: translateX(-2px) !important;
+    }
+    
+    [wirechat] .wirechat-back-button svg {
+        width: 16px !important;
+        height: 16px !important;
+        transition: transform 0.2s ease !important;
+    }
+    
+    [wirechat] .wirechat-back-button:hover svg {
+        transform: translateX(-2px) !important;
+    }
+    
+    .dark [wirechat] .wirechat-back-button {
+        border-color: var(--wc-border-dark) !important;
+        color: var(--wc-text-muted) !important;
+    }
+    
+    .dark [wirechat] .wirechat-back-button:hover {
+        background: var(--wc-surface-dark) !important;
+        border-color: var(--wc-primary) !important;
+        color: var(--wc-primary) !important;
+    }
+    
+    /* Style the header to accommodate back button */
+    [wirechat] [class*="header"] h1,
+    [wirechat] [class*="header"] h2,
+    [wirechat] [class*="header"] h3,
+    [wirechat] header h1,
+    [wirechat] header h2,
+    [wirechat] header h3,
+    [wirechat] [class*="title"] {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.75rem !important;
+    }
+    /* ============================================
        Simple & User-Friendly Wirechat UI
        ============================================ */
     
     :root {
-        --wc-primary: #f59e0b;
-        --wc-primary-hover: #d97706;
-        --wc-primary-light: rgba(245, 158, 11, 0.08);
+        /* Modern Teal to Orange Gradient Theme */
+        --wc-primary: #14b8a6; /* Teal */
+        --wc-primary-hover: #0d9488;
+        --wc-primary-light: rgba(20, 184, 166, 0.1);
+        --wc-primary-gradient: linear-gradient(135deg, #14b8a6 0%, #f97316 100%);
         --wc-bg: #ffffff;
         --wc-bg-dark: #0f172a;
         --wc-surface: #f8fafc;
@@ -59,28 +123,38 @@
     [wirechat] aside,
     [wirechat] [class*="sidebar"],
     [wirechat] [class*="chats-list"] {
-        background: var(--wc-bg) !important;
+        background: #f8fafc !important;
         border-right: 1px solid var(--wc-border) !important;
-        padding: 1rem !important;
-        width: 320px !important;
+        padding: 0 !important;
+        width: 100% !important;
         min-width: 280px !important;
-        max-width: 380px !important;
+        max-width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
     }
 
     .dark [wirechat] aside,
     .dark [wirechat] [class*="sidebar"],
     .dark [wirechat] [class*="chats-list"] {
-        background: var(--wc-bg-dark) !important;
+        background: #1e293b !important;
         border-right-color: var(--wc-border-dark) !important;
     }
 
     /* Sidebar header - simplified */
     [wirechat] [class*="header"],
     [wirechat] header {
-        padding: 0 0 1rem 0 !important;
-        margin-bottom: 0.75rem !important;
+        padding: 1.25rem 1rem !important;
+        margin-bottom: 0 !important;
         border-bottom: 1px solid var(--wc-border) !important;
-        background: transparent !important;
+        background: white !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    }
+    
+    .dark [wirechat] [class*="header"],
+    .dark [wirechat] header {
+        background: #0f172a !important;
+        border-bottom-color: var(--wc-border-dark) !important;
     }
 
     .dark [wirechat] [class*="header"],
@@ -95,23 +169,24 @@
     [wirechat] input[type="search"],
     [wirechat] input[type="text"][placeholder*="Search"],
     [wirechat] input[placeholder*="search"] {
-        width: 100% !important;
-        padding: 0.625rem 1rem 0.625rem 2.5rem !important;
-        border: 1px solid var(--wc-border) !important;
-        border-radius: 0.5rem !important;
-        background: var(--wc-surface) !important;
-        font-size: 0.875rem !important;
+        width: calc(100% - 2rem) !important;
+        padding: 0.75rem 1rem 0.75rem 2.75rem !important;
+        border: 1.5px solid var(--wc-border) !important;
+        border-radius: 0.75rem !important;
+        background: white !important;
+        font-size: 0.9375rem !important;
+        transition: all 0.2s ease !important;
+        margin: 1rem !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
         color: var(--wc-text) !important;
-        transition: all 0.15s ease !important;
-        margin-bottom: 1rem !important;
     }
-
+    
     [wirechat] input[type="search"]:focus,
     [wirechat] input[type="text"][placeholder*="Search"]:focus {
         outline: none !important;
         border-color: var(--wc-primary) !important;
-        background: var(--wc-bg) !important;
-        box-shadow: 0 0 0 3px var(--wc-primary-light) !important;
+        background: white !important;
+        box-shadow: 0 0 0 3px var(--wc-primary-light), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
     }
 
     .dark [wirechat] input[type="search"],
@@ -124,27 +199,29 @@
     .dark [wirechat] input[type="search"]:focus,
     .dark [wirechat] input[type="text"][placeholder*="Search"]:focus {
         background: var(--wc-bg-dark) !important;
+        border-color: var(--wc-primary) !important;
     }
 
     /* ============================================
        Chat Items - Clean & Clickable
        ============================================ */
     
-    /* Chat item list */
+    /* Chat item list - Modern & Clean */
     [wirechat] [class*="chat-item"],
     [wirechat] [class*="conversation"],
     [wirechat] a[href*="/chats/"],
-    [wirechat] [role="listitem"] {
+    [wirechat] [role="listitem"],
+    [wirechat] [class*="conversation-item"] {
         display: flex !important;
         align-items: center !important;
-        gap: 0.75rem !important;
-        padding: 0.75rem !important;
-        margin: 0.25rem 0 !important;
-        border-radius: 0.75rem !important;
+        gap: 0.875rem !important;
+        padding: 0.875rem 1rem !important;
+        margin: 0.25rem 0.5rem !important;
+        border-radius: 0.875rem !important;
         cursor: pointer !important;
         background: transparent !important;
         border: none !important;
-        transition: background-color 0.15s ease !important;
+        transition: all 0.2s ease !important;
         text-decoration: none !important;
         color: inherit !important;
     }
@@ -152,56 +229,82 @@
     /* Hover state - subtle */
     [wirechat] [class*="chat-item"]:hover,
     [wirechat] [class*="conversation"]:hover,
-    [wirechat] a[href*="/chats/"]:hover {
-        background: var(--wc-surface) !important;
+    [wirechat] a[href*="/chats/"]:hover,
+    [wirechat] [class*="conversation-item"]:hover {
+        background: white !important;
+        transform: translateX(2px) !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
     }
 
     .dark [wirechat] [class*="chat-item"]:hover,
     .dark [wirechat] [class*="conversation"]:hover,
-    .dark [wirechat] a[href*="/chats/"]:hover {
+    .dark [wirechat] a[href*="/chats/"]:hover,
+    .dark [wirechat] [class*="conversation-item"]:hover {
         background: var(--wc-surface-dark) !important;
+        transform: translateX(2px) !important;
     }
 
     /* Active chat - clear indicator */
     [wirechat] [class*="chat-item"][aria-current="page"],
     [wirechat] [class*="active"],
-    [wirechat] a[href*="/chats/"][aria-current="page"] {
-        background: var(--wc-primary-light) !important;
+    [wirechat] a[href*="/chats/"][aria-current="page"],
+    [wirechat] [class*="conversation-item"][aria-current="page"] {
+        background: linear-gradient(90deg, rgba(20, 184, 166, 0.12) 0%, rgba(20, 184, 166, 0.06) 100%) !important;
         border-left: 3px solid var(--wc-primary) !important;
-        padding-left: calc(0.75rem - 3px) !important;
+        padding-left: calc(1rem - 3px) !important;
+        font-weight: 500 !important;
+        box-shadow: 0 2px 4px rgba(20, 184, 166, 0.1) !important;
     }
 
     .dark [wirechat] [class*="chat-item"][aria-current="page"],
-    .dark [wirechat] [class*="active"] {
-        background: rgba(245, 158, 11, 0.15) !important;
+    .dark [wirechat] [class*="active"],
+    .dark [wirechat] [class*="conversation-item"][aria-current="page"] {
+        background: rgba(20, 184, 166, 0.2) !important;
+        border-left-color: var(--wc-primary) !important;
     }
 
     /* ============================================
        Avatars - Simple & Clear
        ============================================ */
     
+    /* Avatar styling - Modern & Clean */
     [wirechat] img[class*="avatar"],
     [wirechat] [class*="avatar"] img,
-    [wirechat] img[alt*="avatar"] {
-        width: 44px !important;
-        height: 44px !important;
+    [wirechat] img[alt*="avatar"],
+    [wirechat] [class*="avatar"] {
+        width: 48px !important;
+        height: 48px !important;
         border-radius: 50% !important;
         border: 2px solid var(--wc-border) !important;
         object-fit: cover !important;
         flex-shrink: 0 !important;
         background: var(--wc-surface) !important;
+        transition: all 0.2s ease !important;
     }
 
     .dark [wirechat] img[class*="avatar"],
-    .dark [wirechat] [class*="avatar"] img {
+    .dark [wirechat] [class*="avatar"] img,
+    .dark [wirechat] [class*="avatar"] {
         border-color: var(--wc-border-dark) !important;
         background: var(--wc-surface-dark) !important;
     }
 
     /* Active chat avatar highlight */
     [wirechat] [class*="active"] img[class*="avatar"],
-    [wirechat] [aria-current="page"] img[class*="avatar"] {
+    [wirechat] [aria-current="page"] img[class*="avatar"],
+    [wirechat] [class*="active"] [class*="avatar"] {
         border-color: var(--wc-primary) !important;
+        border-width: 2.5px !important;
+        box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2) !important;
+    }
+    
+    /* Avatar hover effect */
+    [wirechat] [class*="chat-item"]:hover img[class*="avatar"],
+    [wirechat] [class*="chat-item"]:hover [class*="avatar"],
+    [wirechat] [class*="conversation"]:hover img[class*="avatar"],
+    [wirechat] a[href*="/chats/"]:hover img[class*="avatar"] {
+        border-color: var(--wc-primary) !important;
+        transform: scale(1.05) !important;
     }
 
     /* ============================================
@@ -269,23 +372,27 @@
        Message Area - Clean & Readable
        ============================================ */
     
-    /* Main chat area */
+    /* Main chat area - Beautiful gradient background */
     [wirechat] main,
     [wirechat] [class*="chat-area"],
-    [wirechat] [class*="messages"] {
-        background: var(--wc-bg) !important;
+    [wirechat] [class*="messages"],
+    [wirechat] [class*="message-container"] {
+        background: linear-gradient(to bottom, #f0fdfa 0%, #ffffff 30%, #ffffff 70%, #fff7ed 100%) !important;
         padding: 1.5rem 1rem !important;
         flex: 1 !important;
         overflow-y: auto !important;
         display: flex !important;
         flex-direction: column !important;
-        gap: 0.5rem !important;
+        gap: 0.75rem !important;
+        min-height: 100% !important;
+        position: relative !important;
     }
-
+    
     .dark [wirechat] main,
     .dark [wirechat] [class*="chat-area"],
-    .dark [wirechat] [class*="messages"] {
-        background: var(--wc-bg-dark) !important;
+    .dark [wirechat] [class*="messages"],
+    .dark [wirechat] [class*="message-container"] {
+        background: linear-gradient(to bottom, #0f172a 0%, #1e293b 30%, #1e293b 70%, #1c1917 100%) !important;
     }
 
     /* ============================================
@@ -310,16 +417,16 @@
     [wirechat] [class*="message-bubble"][class*="sent"],
     [wirechat] [class*="message-bubble"][class*="own"],
     [wirechat] [class*="message"]:has([class*="sent"]) > div {
-        background: var(--wc-primary) !important;
+        background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
         color: white !important;
-        padding: 0.625rem 0.875rem !important;
-        border-radius: 1rem 1rem 0.25rem 1rem !important;
+        padding: 0.75rem 1rem !important;
+        border-radius: 1.125rem 1.125rem 0.25rem 1.125rem !important;
         max-width: 70% !important;
         word-wrap: break-word !important;
         word-break: break-word !important;
         font-size: 0.9375rem !important;
-        line-height: 1.5 !important;
-        box-shadow: none !important;
+        line-height: 1.6 !important;
+        box-shadow: 0 2px 4px rgba(20, 184, 166, 0.2) !important;
     }
 
     /* Received messages (left) */
@@ -328,17 +435,17 @@
     }
 
     [wirechat] [class*="message-bubble"]:not([class*="sent"]):not([class*="own"]) {
-        background: var(--wc-surface) !important;
+        background: white !important;
         color: var(--wc-text) !important;
-        padding: 0.625rem 0.875rem !important;
-        border-radius: 1rem 1rem 1rem 0.25rem !important;
+        padding: 0.75rem 1rem !important;
+        border-radius: 1.125rem 1.125rem 1.125rem 0.25rem !important;
         max-width: 70% !important;
         word-wrap: break-word !important;
         word-break: break-word !important;
         font-size: 0.9375rem !important;
-        line-height: 1.5 !important;
+        line-height: 1.6 !important;
         border: 1px solid var(--wc-border) !important;
-        box-shadow: none !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
     }
 
     .dark [wirechat] [class*="message-bubble"]:not([class*="sent"]):not([class*="own"]) {
@@ -412,17 +519,19 @@
     [wirechat] [class*="footer"],
     [wirechat] [class*="input-area"],
     [wirechat] [class*="composer"] {
-        padding: 1rem !important;
+        padding: 1.25rem 1rem !important;
         border-top: 1px solid var(--wc-border) !important;
-        background: var(--wc-bg) !important;
+        background: white !important;
         position: relative !important;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05) !important;
     }
-
+    
     .dark [wirechat] footer,
     .dark [wirechat] [class*="footer"],
     .dark [wirechat] [class*="input-area"] {
         background: var(--wc-bg-dark) !important;
         border-top-color: var(--wc-border-dark) !important;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3) !important;
     }
 
     /* Message input field */
@@ -432,18 +541,19 @@
     [wirechat] [class*="message-input"],
     [wirechat] [class*="input"] {
         width: 100% !important;
-        min-height: 44px !important;
+        min-height: 48px !important;
         max-height: 120px !important;
-        padding: 0.75rem 3rem 0.75rem 1rem !important;
-        border: 1px solid var(--wc-border) !important;
-        border-radius: 1.25rem !important;
+        padding: 0.875rem 3.5rem 0.875rem 1.25rem !important;
+        border: 1.5px solid var(--wc-border) !important;
+        border-radius: 1.5rem !important;
         background: var(--wc-surface) !important;
         font-size: 0.9375rem !important;
         line-height: 1.5 !important;
         color: var(--wc-text) !important;
         resize: none !important;
-        transition: all 0.15s ease !important;
+        transition: all 0.2s ease !important;
         font-family: inherit !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
     }
 
     [wirechat] textarea[placeholder*="message"]:focus,
@@ -451,8 +561,8 @@
     [wirechat] [class*="message-input"]:focus {
         outline: none !important;
         border-color: var(--wc-primary) !important;
-        background: var(--wc-bg) !important;
-        box-shadow: 0 0 0 3px var(--wc-primary-light) !important;
+        background: white !important;
+        box-shadow: 0 0 0 3px var(--wc-primary-light), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
     }
 
     .dark [wirechat] textarea[placeholder*="message"],
@@ -467,38 +577,46 @@
         background: var(--wc-bg-dark) !important;
     }
 
-    /* Send button */
+    /* Send button - Modern gradient */
     [wirechat] button[type="submit"],
     [wirechat] button[aria-label*="send"],
     [wirechat] button[aria-label*="Send"],
     [wirechat] [class*="send-button"],
     [wirechat] [class*="send"] {
         position: absolute !important;
-        right: 1.25rem !important;
-        bottom: 1.25rem !important;
-        width: 36px !important;
-        height: 36px !important;
+        right: 1.5rem !important;
+        bottom: 1.5rem !important;
+        width: 42px !important;
+        height: 42px !important;
         border-radius: 50% !important;
-        background: var(--wc-primary) !important;
+        background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
         border: none !important;
         color: white !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         cursor: pointer !important;
-        transition: all 0.15s ease !important;
-        box-shadow: none !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 2px 8px rgba(20, 184, 166, 0.3) !important;
+        z-index: 10 !important;
     }
 
     [wirechat] button[type="submit"]:hover,
     [wirechat] button[aria-label*="send"]:hover,
     [wirechat] [class*="send-button"]:hover {
-        background: var(--wc-primary-hover) !important;
-        transform: scale(1.05) !important;
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+        transform: scale(1.08) !important;
+        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4) !important;
     }
-
+    
     [wirechat] button[type="submit"]:active {
         transform: scale(0.95) !important;
+    }
+    
+    [wirechat] button[type="submit"] svg,
+    [wirechat] button[aria-label*="send"] svg {
+        width: 20px !important;
+        height: 20px !important;
     }
 
     /* Input action buttons (emojis, attachments) */
@@ -577,18 +695,19 @@
     [wirechat] [class*="notification"],
     [wirechat] [class*="unread"],
     [wirechat] span[class*="count"] {
-        background: var(--wc-primary) !important;
+        background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
         color: white !important;
         border-radius: 0.75rem !important;
         padding: 0.125rem 0.5rem !important;
         font-size: 0.6875rem !important;
         font-weight: 600 !important;
-        min-width: 1.125rem !important;
-        height: 1.125rem !important;
+        min-width: 1.25rem !important;
+        height: 1.25rem !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
         line-height: 1 !important;
+        box-shadow: 0 2px 4px rgba(20, 184, 166, 0.3) !important;
     }
 
     /* ============================================
@@ -597,7 +716,8 @@
     
     [wirechat] [class*="empty"],
     [wirechat] [class*="welcome"],
-    [wirechat] [class*="no-messages"] {
+    [wirechat] [class*="no-messages"],
+    [wirechat] [class*="no-conversations"] {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -605,6 +725,37 @@
         padding: 3rem 2rem !important;
         text-align: center !important;
         color: var(--wc-text-secondary) !important;
+        min-height: 300px !important;
+    }
+    
+    /* Empty state icon */
+    [wirechat] [class*="empty"] svg,
+    [wirechat] [class*="welcome"] svg,
+    [wirechat] [class*="no-messages"] svg {
+        width: 64px !important;
+        height: 64px !important;
+        color: var(--wc-text-muted) !important;
+        margin-bottom: 1rem !important;
+        opacity: 0.5 !important;
+    }
+    
+    /* Empty state text */
+    [wirechat] [class*="empty"] h3,
+    [wirechat] [class*="empty"] h4,
+    [wirechat] [class*="welcome"] h3,
+    [wirechat] [class*="welcome"] h4 {
+        font-size: 1.125rem !important;
+        font-weight: 600 !important;
+        color: var(--wc-text) !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    [wirechat] [class*="empty"] p,
+    [wirechat] [class*="welcome"] p {
+        font-size: 0.9375rem !important;
+        color: var(--wc-text-secondary) !important;
+        line-height: 1.6 !important;
+        max-width: 400px !important;
     }
 
     .dark [wirechat] [class*="empty"],
@@ -1489,5 +1640,155 @@
                 }
             });
         }, 50);
+    })();
+    
+    /* ============================================
+       Back Button - Inject beside "Chats" Header
+       ============================================ */
+    (function() {
+        let attempts = 0;
+        const maxAttempts = 20;
+        
+        function createBackButton() {
+            attempts++;
+            
+            // Check if button already exists
+            if (document.querySelector('.wirechat-back-button')) {
+                return;
+            }
+            
+            // Only add button if we're on a WireChat page
+            if (!window.location.pathname.includes('/chats')) {
+                return;
+            }
+            
+            // Try multiple strategies to find the "Chats" header
+            let targetElement = null;
+            let titleElement = null;
+            
+            // Strategy 1: Find element containing "Chats" text
+            const allElements = document.querySelectorAll('*');
+            for (let el of allElements) {
+                if (el.textContent && el.textContent.trim().toLowerCase().includes('chats') && 
+                    (el.tagName === 'H1' || el.tagName === 'H2' || el.tagName === 'H3' || 
+                     el.classList.toString().includes('title') || el.classList.toString().includes('header'))) {
+                    titleElement = el;
+                    targetElement = el.parentElement;
+                    break;
+                }
+            }
+            
+            // Strategy 2: Find by class names
+            if (!targetElement) {
+                const header = document.querySelector('[class*="header"]') ||
+                              document.querySelector('header') ||
+                              document.querySelector('[class*="title"]');
+                if (header) {
+                    targetElement = header;
+                    titleElement = header.querySelector('h1, h2, h3, span, div, p') || header.firstElementChild;
+                }
+            }
+            
+            // Strategy 3: Find any h1/h2/h3
+            if (!targetElement) {
+                const headings = document.querySelectorAll('h1, h2, h3');
+                for (let heading of headings) {
+                    if (heading.textContent && heading.textContent.trim().toLowerCase().includes('chat')) {
+                        titleElement = heading;
+                        targetElement = heading.parentElement;
+                        break;
+                    }
+                }
+            }
+            
+            // Strategy 4: Find sidebar header area
+            if (!targetElement) {
+                const sidebar = document.querySelector('aside') || 
+                               document.querySelector('[class*="sidebar"]') ||
+                               document.querySelector('[class*="chats"]');
+                if (sidebar) {
+                    const headerInSidebar = sidebar.querySelector('header, [class*="header"], h1, h2, h3');
+                    if (headerInSidebar) {
+                        targetElement = headerInSidebar;
+                        titleElement = headerInSidebar.querySelector('h1, h2, h3, span, div') || headerInSidebar.firstElementChild;
+                    }
+                }
+            }
+            
+            if (!targetElement) {
+                if (attempts < maxAttempts) {
+                    setTimeout(createBackButton, 200);
+                }
+                return;
+            }
+            
+            // Create back button
+            const backButton = document.createElement('a');
+            backButton.className = 'wirechat-back-button';
+            backButton.href = document.referrer && document.referrer.includes(window.location.hostname) 
+                ? document.referrer 
+                : '/admin';
+            const backText = @json(__('app.back'));
+            backButton.innerHTML = `
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                <span>${backText}</span>
+            `;
+            
+            // Add click handler
+            backButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                const referrer = document.referrer;
+                if (referrer && referrer.includes(window.location.hostname)) {
+                    window.location.href = referrer;
+                } else {
+                    window.location.href = '/admin';
+                }
+            });
+            
+            // Insert button before the title element or at the start of target
+            if (titleElement && titleElement.parentNode === targetElement) {
+                targetElement.insertBefore(backButton, titleElement);
+            } else if (targetElement.firstChild) {
+                targetElement.insertBefore(backButton, targetElement.firstChild);
+            } else {
+                targetElement.appendChild(backButton);
+            }
+        }
+        
+        // Create button on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                attempts = 0;
+                createBackButton();
+            });
+        } else {
+            attempts = 0;
+            createBackButton();
+        }
+        
+        // Also try after delays to catch dynamically loaded content
+        setTimeout(function() { attempts = 0; createBackButton(); }, 300);
+        setTimeout(function() { attempts = 0; createBackButton(); }, 800);
+        setTimeout(function() { attempts = 0; createBackButton(); }, 1500);
+        setTimeout(function() { attempts = 0; createBackButton(); }, 2500);
+        
+        // Watch for route changes (Livewire/Alpine)
+        window.addEventListener('livewire:load', function() { attempts = 0; createBackButton(); });
+        window.addEventListener('livewire:navigate', function() { attempts = 0; createBackButton(); });
+        window.addEventListener('livewire:update', function() { attempts = 0; createBackButton(); });
+        
+        // Watch for DOM changes
+        const observer = new MutationObserver(function() {
+            if (!document.querySelector('.wirechat-back-button') && attempts < maxAttempts) {
+                setTimeout(function() { attempts = 0; createBackButton(); }, 100);
+            }
+        });
+        
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
     })();
 </script>

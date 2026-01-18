@@ -50,11 +50,13 @@
         <div class="w-full max-w-4xl">
             <!-- Header Section -->
             <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full mb-4 shadow-lg border-2 border-white/30">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                    </svg>
+                <!-- Logo -->
+                <div class="flex justify-center mb-6">
+                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-white/20">
+                        <x-job-seeker-logo :size="280" />
+                    </div>
                 </div>
+                
                 <h1 class="text-4xl sm:text-5xl font-bold text-white mb-3 drop-shadow-lg">
                     {{ __('app.join_our_platform') }}
                 </h1>

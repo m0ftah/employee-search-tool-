@@ -248,7 +248,7 @@ class JobResource extends Resource
                         Forms\Components\TextInput::make('title')
                             ->label(__('app.job_title'))
                             ->placeholder(__('app.search_job_title')),
-                    ])
+            ])
                     ->query(function ($query, array $data) {
                         return $query->when(
                             $data['title'],
@@ -430,7 +430,12 @@ class JobResource extends Resource
                         $user = auth()->user();
 
                         if (!$user->candidate) {
-                            throw new \Exception('Candidate profile not found. Please complete your profile first.');
+                            \Filament\Notifications\Notification::make()
+                                ->danger()
+                                ->title(__('app.error'))
+                                ->body(__('app.candidate_profile_not_found'))
+                                ->send();
+                            return;
                         }
 
                         // Check if already applied
@@ -439,17 +444,33 @@ class JobResource extends Resource
                             ->first();
 
                         if ($existingApplication) {
-                            throw new \Exception('You have already applied for this job.');
+                            \Filament\Notifications\Notification::make()
+                                ->warning()
+                                ->title(__('app.already_applied'))
+                                ->body(__('app.you_have_already_applied_for_this_job'))
+                                ->send();
+                            return;
                         }
 
                         // Check if job is still active
                         if ($record->status !== 'active') {
-                            throw new \Exception('This job is no longer accepting applications.');
+                            \Filament\Notifications\Notification::make()
+                                ->warning()
+                                ->title(__('app.job_not_accepting_applications'))
+                                ->body(__('app.this_job_is_no_longer_accepting_applications'))
+                                ->send();
+                            return;
                         }
 
                         // Check deadline
                         if ($record->application_deadline < now()->toDateString()) {
-                            throw new \Exception('The application deadline for this job has passed.');
+                            $deadlineFormatted = $record->application_deadline->format('M d, Y');
+                            \Filament\Notifications\Notification::make()
+                                ->warning()
+                                ->title(__('app.application_deadline_passed'))
+                                ->body(__('app.the_application_deadline_for_this_job_has_passed', ['deadline' => $deadlineFormatted]))
+                                ->send();
+                            return;
                         }
 
                         // Determine resume path
@@ -459,7 +480,12 @@ class JobResource extends Resource
                         } elseif (!empty($data['resume'])) {
                             $resumePath = $data['resume'];
                         } else {
-                            throw new \Exception('Please either use your profile resume or upload a new one.');
+                            \Filament\Notifications\Notification::make()
+                                ->danger()
+                                ->title(__('app.resume_required'))
+                                ->body(__('app.please_use_profile_resume_or_upload_new_one'))
+                                ->send();
+                            return;
                         }
 
                         // Create application

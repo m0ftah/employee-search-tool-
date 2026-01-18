@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Candidate;
 use App\Services\CVTextExtractorService;
+use App\Services\GeminiService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 
@@ -72,7 +72,8 @@ class CandidateRegistrationController extends Controller
                 $cvText = $extractor->extractText($resumePath);
 
                 // Call Gemini API to analyze the CV
-                $score = $this->analyzeCVWithGemini($cvText);
+                $geminiService = new GeminiService();
+                $score = $geminiService->analyzeCV($cvText);
             } catch (Exception $e) {
                 // Log the error but don't fail registration
                 Log::error('CV analysis failed: ' . $e->getMessage());
@@ -107,59 +108,5 @@ class CandidateRegistrationController extends Controller
             ->with('success', __('app.registration_successful'));
     }
 
-    /**
-     * Analyze CV text using Google Gemini API
-     *
-     * @param string $cvText Extracted text from CV
-     * @return float|null Score from 0-10, or null if analysis fails
-     */
-    private function analyzeCVWithGemini(string $cvText): ?float
-    {
-        try {
-            $apiKey = 'AIzaSyDdnxwuIVlAJfOd-miYOh5Nwn85DyuiD0U';
-            $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent" ;
-
-            $prompt = "أنت محلل سير ذاتية محترف. قم بتقييم السيرة الذاتية التالية من 10 نقاط بناءً على الإنجازات، الكلمات المفتاحية ذات الصلة، والتنسيق. يجب أن يكون الناتج هو **رقم واحد فقط** في السطر الأول، ولا شيء سواه. لا تكتب أي تفسير أو مقدمة أو تفاصيل.";
-
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'X-goog-api-key' => $apiKey,
-            ])->post($apiUrl, [
-                'contents' => [
-                    [
-                        'parts' => [
-                            ['text' => $prompt],
-                            ['text' => $cvText],
-                        ],
-                    ],
-                ],
-            ]);
-
-            if ($response->successful()) {
-                $responseData = $response->json();
-
-                // Extract the score from the response
-                if (isset($responseData['candidates'][0]['content']['parts'][0]['text'])) {
-                    $text = trim($responseData['candidates'][0]['content']['parts'][0]['text']);
-
-                    // Extract the first number from the response
-                    if (preg_match('/(\d+(?:\.\d+)?)/', $text, $matches)) {
-                        $score = (float) $matches[1];
-
-                        // Ensure score is between 0 and 10
-                        $score = max(0, min(10, $score));
-
-                        return $score;
-                    }
-                }
-            } else {
-                Log::error('Gemini API error: ' . $response->body());
-            }
-        } catch (Exception $e) {
-            Log::error('Gemini API exception: ' . $e->getMessage());
-        }
-
-        return null;
-    }
 }
 

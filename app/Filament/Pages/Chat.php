@@ -35,4 +35,12 @@ class Chat extends Page
     {
         return __('app.chat');
     }
+
+    public function mount()
+    {
+        // Redirect to WireChat's unified interface to avoid duplicate views
+        // This ensures users see only one chat interface
+        $prefix = config('wirechat.routes.prefix', 'chats');
+        return redirect("/{$prefix}");
+    }
 }
