@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\View;
 
 class Dashboard extends BaseDashboard
 {
@@ -40,11 +39,6 @@ class Dashboard extends BaseDashboard
     
     public function getHeading(): string | Htmlable
     {
-        return new class implements Htmlable {
-            public function toHtml(): string
-            {
-                return view('filament.components.dashboard-logo')->render();
-            }
-        };
+        return __('app.dashboard');
     }
 }

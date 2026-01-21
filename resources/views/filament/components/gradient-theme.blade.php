@@ -119,6 +119,22 @@
         object-fit: contain !important;
         display: block !important;
     }
+
+    /* Login page logo styling */
+    .fi-login-logo-custom {
+        height: 200px !important;
+        width: auto !important;
+        object-fit: contain !important;
+        display: block !important;
+        margin: 0 auto !important;
+    }
+
+    /* Hide Laravel text on login page */
+    .fi-simple-page [class*="heading"]:has-text("Laravel"),
+    .fi-simple-page h1:has-text("Laravel"),
+    .fi-simple-page h2:has-text("Laravel") {
+        display: none !important;
+    }
 </style>
 
 <script>
@@ -255,5 +271,122 @@
     // Watch for navigation changes
     window.addEventListener('livewire:navigate', setupSidebarLogo);
     window.addEventListener('livewire:update', setupSidebarLogo);
+})();
+
+// Replace Laravel with logo on login page
+(function() {
+    let retryCount = 0;
+    const MAX_RETRIES = 15;
+
+    function setupLoginLogo() {
+        // Check if we're on login page
+        if (!window.location.pathname.includes('/login')) {
+            return;
+        }
+
+        // Find all elements that might contain "Laravel"
+        const allElements = document.querySelectorAll('*');
+        let targetElement = null;
+
+        for (const el of allElements) {
+            // Skip if already processed
+            if (el.querySelector('.fi-login-logo-custom')) {
+                continue;
+            }
+
+            // Check if element contains "Laravel" text
+            const text = el.textContent || '';
+            if (text.trim() === 'Laravel' || (text.includes('Laravel') && el.children.length === 0)) {
+                // Check if it's a heading or brand element
+                if (el.tagName.match(/^H[1-6]$/) || 
+                    el.className.includes('heading') || 
+                    el.className.includes('title') || 
+                    el.className.includes('brand') ||
+                    el.closest('.fi-simple-page')) {
+                    targetElement = el;
+                    break;
+                }
+            }
+        }
+
+        // Also try to find by common Filament selectors
+        if (!targetElement) {
+            const selectors = [
+                '.fi-simple-page h1',
+                '.fi-simple-page h2',
+                '.fi-simple-page [class*="heading"]',
+                '.fi-simple-page [class*="title"]',
+                '.fi-simple-page [class*="brand"]',
+                'h1',
+                'h2'
+            ];
+
+            for (const selector of selectors) {
+                const elements = document.querySelectorAll(selector);
+                for (const el of elements) {
+                    if (el.textContent && el.textContent.includes('Laravel')) {
+                        targetElement = el;
+                        break;
+                    }
+                }
+                if (targetElement) break;
+            }
+        }
+
+        if (targetElement && !targetElement.querySelector('.fi-login-logo-custom')) {
+            // Create logo element
+            const logoImg = document.createElement('img');
+            logoImg.src = '{{ asset("storage/WhatsApp_Image_2026-01-18_at_17.29.19-removebg-preview.png") }}';
+            logoImg.alt = 'Job Seeker Hub Logo';
+            logoImg.className = 'fi-login-logo-custom';
+
+            // Replace content with logo
+            targetElement.innerHTML = '';
+            targetElement.style.display = 'flex';
+            targetElement.style.justifyContent = 'center';
+            targetElement.style.alignItems = 'center';
+            targetElement.style.margin = '0 auto';
+            targetElement.appendChild(logoImg);
+            
+            retryCount = 0; // Reset on success
+            return true;
+        }
+
+        return false;
+    }
+
+    function trySetupLoginLogo() {
+        if (retryCount >= MAX_RETRIES) {
+            return;
+        }
+
+        if (!setupLoginLogo()) {
+            retryCount++;
+            setTimeout(trySetupLoginLogo, 200);
+        }
+    }
+
+    // Run on page load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', trySetupLoginLogo);
+    } else {
+        trySetupLoginLogo();
+    }
+
+    // Also try after delays
+    setTimeout(trySetupLoginLogo, 300);
+    setTimeout(trySetupLoginLogo, 800);
+    setTimeout(trySetupLoginLogo, 1500);
+    setTimeout(trySetupLoginLogo, 2500);
+
+    // Watch for navigation changes
+    window.addEventListener('livewire:navigate', function() {
+        retryCount = 0;
+        trySetupLoginLogo();
+    });
+    window.addEventListener('livewire:update', function() {
+        retryCount = 0;
+        trySetupLoginLogo();
+    });
 })();
 </script>
