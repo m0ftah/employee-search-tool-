@@ -113,7 +113,7 @@ class ApplicationResource extends Resource
                 Tables\Columns\TextColumn::make('candidate.score')
                     ->label(__('app.cv_score'))
                     ->numeric(
-                        decimalPlaces: 1,
+                        decimalPlaces: 0,
                     )
                     ->badge()
                     ->color(fn ($state): string => match (true) {

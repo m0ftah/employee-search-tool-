@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Candidate;
 use App\Services\CVTextExtractorService;
-use App\Services\GeminiService;
+use App\Services\CVScoringService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -71,9 +72,9 @@ class CandidateRegistrationController extends Controller
                 $extractor = new CVTextExtractorService();
                 $cvText = $extractor->extractText($resumePath);
 
-                // Call Gemini API to analyze the CV
-                $geminiService = new GeminiService();
-                $score = $geminiService->analyzeCV($cvText);
+                // Analyze CV using the configured AI provider (Gemini / DeepSeek)
+                $scoringService = new CVScoringService();
+                $score = $scoringService->analyzeCV($cvText);
             } catch (Exception $e) {
                 // Log the error but don't fail registration
                 Log::error('CV analysis failed: ' . $e->getMessage());
@@ -102,9 +103,10 @@ class CandidateRegistrationController extends Controller
         }
 
         // Log the user in
-        auth()->login($user);
+        Auth::login($user);
 
-        return redirect('/admin')
+        // After registration, send candidates to the Applications resource in Filament
+        return redirect('/admin/applications')
             ->with('success', __('app.registration_successful'));
     }
 

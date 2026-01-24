@@ -124,19 +124,15 @@ class CandidateResource extends Resource
                 Tables\Columns\TextColumn::make('score')
                     ->label(__('app.cv_score'))
                     ->numeric(
-                        decimalPlaces: 1,
+                        decimalPlaces: 0,
                     )
+                    ->badge()
                     ->sortable()
                     ->color(fn ($state) => match (true) {
                         $state >= 8 => 'success',
                         $state >= 6 => 'warning',
                         $state >= 4 => 'info',
                         default => 'gray',
-                    })
-                    ->icon(fn ($state) => match (true) {
-                        $state >= 8 => 'heroicon-o-star',
-                        $state >= 6 => 'heroicon-o-check-circle',
-                        default => 'heroicon-o-x-circle',
                     }),
                 Tables\Columns\TextColumn::make('resume_path')
                     ->label(__('app.cv_resume'))
