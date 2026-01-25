@@ -173,5 +173,38 @@ return [
     'the_application_deadline_for_this_job_has_passed' => 'The application deadline for this job has passed on :deadline. Please look for other available opportunities.',
     'resume_required' => 'Resume Required',
     'please_use_profile_resume_or_upload_new_one' => 'Please either use your profile resume or upload a new one to complete your application.',
+    
+    // Email Notifications
+    'hello' => 'Hello',
+    'not_specified' => 'Not Specified',
+    'location' => 'Location',
+    
+    // New Job Posted Email
+    'new_job_posted_subject' => 'New Job Opportunity: :title',
+    'new_job_posted_intro' => 'A new job opportunity has been posted that might interest you!',
+    'new_job_posted_description' => 'We encourage you to review the job details and apply if it matches your skills and interests.',
+    'new_job_posted_closing' => 'Thank you for being part of our platform. We wish you the best of luck!',
+    'view_job_details' => 'View Job Details',
+    
+    // Application Accepted Email
+    'application_accepted_subject' => 'Congratulations! Your Application for :title Has Been Accepted',
+    'application_accepted_intro' => 'Great news! Your application for the position **:title** has been accepted and you have been shortlisted.',
+    'application_accepted_closing' => 'We look forward to the next steps in the hiring process. Good luck!',
+    'view_application' => 'View Application',
+    
+    // Application Rejected Email
+    'application_rejected_subject' => 'Update on Your Application for :title',
+    'application_rejected_intro' => 'We regret to inform you that your application for the position **:title** has not been selected for this opportunity.',
+    'application_rejected_encouragement' => 'We appreciate your interest and encourage you to continue applying for other positions that match your qualifications.',
+    'application_rejected_closing' => 'Thank you for your interest, and we wish you success in your job search.',
+    
+    // Chat Message Email
+    'new_chat_message_subject' => 'New Message from :sender',
+    'new_chat_message_intro' => 'You have received a new message from **:sender**.',
+    'message' => 'Message',
+    'no_message_content' => '(No message content)',
+    'view_chat' => 'View Chat',
+    'new_chat_message_closing' => 'Click the button above to view the conversation and reply.',
+    'user' => 'User',
 ];
 

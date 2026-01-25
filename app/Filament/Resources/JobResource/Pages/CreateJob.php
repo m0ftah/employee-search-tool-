@@ -4,6 +4,7 @@ namespace App\Filament\Resources\JobResource\Pages;
 
 use App\Filament\Resources\JobResource;
 use App\Models\HR;
+use App\Models\User;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateJob extends CreateRecord
@@ -54,6 +55,20 @@ class CreateJob extends CreateRecord
         }
 
         return $data;
+    }
+
+    protected function afterCreate(): void
+    {
+        // Send email notification to all candidates when a new job is posted
+        $candidates = User::where('type', 'candidate')
+            ->whereHas('candidate')
+            ->get();
+
+        foreach ($candidates as $candidate) {
+            $candidate->notify(
+                new \App\Notifications\NewJobPostedNotification($this->record)
+            );
+        }
     }
 
     protected function getRedirectUrl(): string

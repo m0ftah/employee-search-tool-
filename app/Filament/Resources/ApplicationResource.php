@@ -337,6 +337,13 @@ class ApplicationResource extends Resource
                             'status' => 'hired',
                         ]);
 
+                        // Send email notification to candidate
+                        if ($record->candidate && $record->candidate->user) {
+                            $record->candidate->user->notify(
+                                new \App\Notifications\ApplicationAcceptedNotification($record)
+                            );
+                        }
+
                         \Filament\Notifications\Notification::make()
                             ->success()
                             ->title(__('app.candidate_hired'))
@@ -363,6 +370,13 @@ class ApplicationResource extends Resource
                             'status' => 'rejected',
                             'feedback_from_hr' => $data['rejection_comment'],
                         ]);
+
+                        // Send email notification to candidate
+                        if ($record->candidate && $record->candidate->user) {
+                            $record->candidate->user->notify(
+                                new \App\Notifications\ApplicationRejectedNotification($record)
+                            );
+                        }
 
                         \Filament\Notifications\Notification::make()
                             ->success()

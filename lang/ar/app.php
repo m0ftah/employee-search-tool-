@@ -172,5 +172,38 @@ return [
     'the_application_deadline_for_this_job_has_passed' => 'انتهى الموعد النهائي للتقديم لهذه الوظيفة في :deadline. يرجى البحث عن فرص أخرى متاحة.',
     'resume_required' => 'السيرة الذاتية مطلوبة',
     'please_use_profile_resume_or_upload_new_one' => 'يرجى استخدام سيرتك الذاتية من الملف الشخصي أو رفع سيرة ذاتية جديدة لإكمال طلبك.',
+    
+    // Email Notifications
+    'hello' => 'مرحباً',
+    'not_specified' => 'غير محدد',
+    'location' => 'الموقع',
+    
+    // New Job Posted Email
+    'new_job_posted_subject' => 'فرصة عمل جديدة: :title',
+    'new_job_posted_intro' => 'تم نشر فرصة عمل جديدة قد تهمك!',
+    'new_job_posted_description' => 'نشجعك على مراجعة تفاصيل الوظيفة والتقديم إذا كانت تطابق مهاراتك واهتماماتك.',
+    'new_job_posted_closing' => 'شكراً لكونك جزءاً من منصتنا. نتمنى لك حظاً موفقاً!',
+    'view_job_details' => 'عرض تفاصيل الوظيفة',
+    
+    // Application Accepted Email
+    'application_accepted_subject' => 'تهانينا! تم قبول طلبك للوظيفة :title',
+    'application_accepted_intro' => 'أخبار رائعة! تم قبول طلبك للوظيفة **:title** وتم إدراجك في القائمة المختصرة.',
+    'application_accepted_closing' => 'نتطلع إلى الخطوات التالية في عملية التوظيف. حظاً موفقاً!',
+    'view_application' => 'عرض الطلب',
+    
+    // Application Rejected Email
+    'application_rejected_subject' => 'تحديث بخصوص طلبك للوظيفة :title',
+    'application_rejected_intro' => 'نأسف لإبلاغك بأن طلبك للوظيفة **:title** لم يتم اختياره لهذه الفرصة.',
+    'application_rejected_encouragement' => 'نقدر اهتمامك ونشجعك على الاستمرار في التقديم للوظائف الأخرى التي تطابق مؤهلاتك.',
+    'application_rejected_closing' => 'شكراً لاهتمامك، ونتمنى لك النجاح في بحثك عن عمل.',
+    
+    // Chat Message Email
+    'new_chat_message_subject' => 'رسالة جديدة من :sender',
+    'new_chat_message_intro' => 'لقد تلقيت رسالة جديدة من **:sender**.',
+    'message' => 'الرسالة',
+    'no_message_content' => '(لا يوجد محتوى للرسالة)',
+    'view_chat' => 'عرض المحادثة',
+    'new_chat_message_closing' => 'انقر على الزر أعلاه لعرض المحادثة والرد.',
+    'user' => 'مستخدم',
 ];
 

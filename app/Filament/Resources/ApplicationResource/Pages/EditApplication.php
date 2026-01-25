@@ -10,6 +10,8 @@ class EditApplication extends EditRecord
 {
     protected static string $resource = ApplicationResource::class;
 
+    protected ?string $originalStatus = null;
+
     protected function getHeaderActions(): array
     {
         return [
@@ -32,6 +34,38 @@ class EditApplication extends EditRecord
         if ($user->isCandidate() && $user->candidate) {
             if ($this->record->candidate_id !== $user->candidate->id) {
                 abort(403, 'You can only edit your own applications.');
+            }
+        }
+
+        // Store original status before any changes
+        $this->originalStatus = $this->record->status;
+    }
+
+    protected function beforeSave(): void
+    {
+        // Refresh the record to get the latest status before save
+        $this->record->refresh();
+        $this->originalStatus = $this->record->status;
+    }
+
+    protected function afterSave(): void
+    {
+        // Refresh to get the updated status
+        $this->record->refresh();
+        $newStatus = $this->record->status;
+
+        // Only send notifications if status actually changed to hired or rejected
+        if ($this->originalStatus !== $newStatus && $this->record->candidate && $this->record->candidate->user) {
+            if ($newStatus === 'hired') {
+                // Send accepted notification when status changes to 'hired'
+                $this->record->candidate->user->notify(
+                    new \App\Notifications\ApplicationAcceptedNotification($this->record)
+                );
+            } elseif ($newStatus === 'rejected') {
+                // Send rejected notification when status changes to 'rejected'
+                $this->record->candidate->user->notify(
+                    new \App\Notifications\ApplicationRejectedNotification($this->record)
+                );
             }
         }
     }

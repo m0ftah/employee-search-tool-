@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Listeners\SendChatMessageEmailNotification;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Namu\WireChat\Events\NotifyParticipant;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Register Wirechat message event listener
+        Event::listen(
+            NotifyParticipant::class,
+            SendChatMessageEmailNotification::class
+        );
     }
 }
