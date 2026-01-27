@@ -30,9 +30,9 @@
                 </button>
                 <div class="w-px h-8 bg-slate-600"></div>
                 <button onclick="switchLanguage('ar')" 
-                        class="px-4 py-2.5 text-sm font-semibold transition-all duration-300 {{ app()->getLocale() === 'ar' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-inner' : 'text-gray-300 hover:bg-slate-700' }} flex items-center gap-2 min-w-[80px] justify-center relative z-10">
+                        class="px-4 py-2.5 text-sm font-semibold transition-all duration-300 {{ app()->getLocale() === 'ar' ? 'bg-white/20 backdrop-blur-sm text-white shadow-inner' : 'text-white/80 hover:bg-white/10' }} flex items-center gap-2 min-w-[80px] justify-center relative z-10">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm3 1h6v4H7V5zm8 8v2h1v-2h-1zm-2-2H7v4h6v-4zm0-4H7v4h6V7zm-7 4v2H4v-2h2zm8-4v2h-1V7h1zM9 9H7v2h2V9zm6 0h-2v2h2V9z" clip-rule="evenodd"/>
+                        <path fill-rule="evenodd" d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.724 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L12 11.236 11.618 14z" clip-rule="evenodd"/>
                     </svg>
                     <span>AR</span>
                 </button>
@@ -52,8 +52,8 @@
             <div class="text-center mb-8">
                 <!-- Logo -->
                 <div class="flex justify-center mb-6">
-                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-white/20">
-                        <x-job-seeker-logo :size="280" />
+                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 shadow-xl border border-white/20">
+                        <x-job-seeker-logo :size="320" />
                     </div>
                 </div>
                 
@@ -106,8 +106,8 @@
                         <!-- User Information Section -->
                         <div class="space-y-6">
                             <div class="flex items-center space-x-3 pb-4 border-b-2 border-gray-200">
-                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <div class="flex-shrink-0 w-12 h-12 bg-teal-600 rounded-xl flex items-center justify-center shadow-lg ring-4 ring-teal-50">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
                                 </div>
@@ -125,21 +125,21 @@
                                         class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 shadow-sm hover:border-teal-300">
                                 </div>
                                 <div class="space-y-2">
-                                    <label for="email" class="block text-sm font-semibold text-gray-300">
+                                    <label for="email" class="block text-sm font-semibold text-gray-700">
                                         {{ __('app.email_address') }} <span class="text-red-500">*</span>
                                     </label>
                                     <input type="email" id="email" name="email" value="{{ old('email') }}" required placeholder="your.email@example.com"
                                         class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 shadow-sm hover:border-teal-300">
                                 </div>
                                 <div class="space-y-2">
-                                    <label for="password" class="block text-sm font-semibold text-gray-300">
+                                    <label for="password" class="block text-sm font-semibold text-gray-700">
                                         {{ __('common.password') }} <span class="text-red-500">*</span>
                                     </label>
                                     <input type="password" id="password" name="password" required placeholder="{{ __('common.password') }}"
                                         class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 shadow-sm hover:border-teal-300">
                                 </div>
                                 <div class="space-y-2">
-                                    <label for="password_confirmation" class="block text-sm font-semibold text-gray-300">
+                                    <label for="password_confirmation" class="block text-sm font-semibold text-gray-700">
                                         {{ __('common.confirm_password') }} <span class="text-red-500">*</span>
                                     </label>
                                     <input type="password" id="password_confirmation" name="password_confirmation" required placeholder="{{ __('common.confirm_password') }}"
@@ -151,8 +151,8 @@
                         <!-- Candidate Profile Section -->
                         <div class="space-y-6">
                             <div class="flex items-center space-x-3 pb-4 border-b-2 border-gray-200">
-                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <div class="flex-shrink-0 w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg ring-4 ring-orange-50">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
                                 </div>
@@ -163,21 +163,21 @@
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="space-y-2">
-                                    <label for="phone" class="block text-sm font-semibold text-gray-300">
+                                    <label for="phone" class="block text-sm font-semibold text-gray-700">
                                         {{ __('app.phone_number') }}
                                     </label>
                                     <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" placeholder="{{ __('app.phone_number') }}"
                                         class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 shadow-sm hover:border-teal-300">
                                 </div>
                                 <div class="space-y-2">
-                                    <label for="location" class="block text-sm font-semibold text-gray-300">
+                                    <label for="location" class="block text-sm font-semibold text-gray-700">
                                         {{ __('common.location') }}
                                     </label>
                                     <input type="text" id="location" name="location" value="{{ old('location') }}" placeholder="{{ __('common.location') }}"
                                         class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 shadow-sm hover:border-teal-300">
                                 </div>
                                 <div class="space-y-2">
-                                    <label for="education_level" class="block text-sm font-semibold text-gray-300">
+                                    <label for="education_level" class="block text-sm font-semibold text-gray-700">
                                         {{ __('app.education_level') }}
                                     </label>
                                     <select id="education_level" name="education_level"
@@ -191,14 +191,14 @@
                                     </select>
                                 </div>
                                 <div class="space-y-2">
-                                    <label for="years_of_experience" class="block text-sm font-semibold text-gray-300">
+                                    <label for="years_of_experience" class="block text-sm font-semibold text-gray-700">
                                         {{ __('app.years_of_experience') }}
                                     </label>
                                     <input type="number" id="years_of_experience" name="years_of_experience" value="{{ old('years_of_experience') }}" min="0" placeholder="0"
                                         class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 shadow-sm hover:border-teal-300">
                                 </div>
                                 <div class="md:col-span-2 space-y-2">
-                                    <label for="skills" class="block text-sm font-semibold text-gray-300">
+                                    <label for="skills" class="block text-sm font-semibold text-gray-700">
                                         {{ __('app.skills') }}
                                     </label>
                                     <input type="text" id="skills" name="skills" value="{{ old('skills') }}" placeholder="{{ __('app.skills_placeholder') }}"
@@ -228,14 +228,14 @@
                                     <p class="text-xs text-gray-500">{{ __('app.maximum_file_size') }}</p>
                                 </div>
                                 <div class="md:col-span-2 space-y-2">
-                                    <label for="certifications" class="block text-sm font-semibold text-gray-300">
+                                    <label for="certifications" class="block text-sm font-semibold text-gray-700">
                                         {{ __('app.certifications') }}
                                     </label>
                                     <textarea id="certifications" name="certifications" rows="3" placeholder="{{ __('app.list_certifications') }}"
                                         class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 resize-none shadow-sm hover:border-teal-300">{{ old('certifications') }}</textarea>
                                 </div>
                                 <div class="md:col-span-2 space-y-2">
-                                    <label for="bio" class="block text-sm font-semibold text-gray-300">
+                                    <label for="bio" class="block text-sm font-semibold text-gray-700">
                                         {{ __('app.bio') }}
                                     </label>
                                     <textarea id="bio" name="bio" rows="4" placeholder="{{ __('app.tell_us_about_yourself_placeholder') }}"

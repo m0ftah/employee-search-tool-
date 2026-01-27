@@ -1,7 +1,11 @@
-<div class="flex items-center gap-4 mb-6">
-    <x-job-seeker-logo :size="250" class="mb-0" />
-    <div class="h-24 w-px bg-gray-300 dark:bg-gray-700"></div>
-    <h2 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-0">
-        {{ __('app.dashboard') }}
-    </h2>
+<div class="flex items-center gap-6 mb-10 pb-6 border-b border-gray-100 dark:border-gray-800">
+    <div class="p-3 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+        <x-job-seeker-logo :size="120" class="mb-0" />
+    </div>
+    <div class="flex flex-col">
+        <h2 class="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-1">
+            {{ __('app.dashboard') }}
+        </h2>
+        <p class="text-gray-500 dark:text-gray-400 text-lg">Manage your workspace professionally</p>
+    </div>
 </div>

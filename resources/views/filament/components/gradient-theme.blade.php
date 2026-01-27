@@ -236,7 +236,7 @@
 
             // Create and add logo
             const logoImg = document.createElement('img');
-            logoImg.src = '{{ asset("storage/WhatsApp_Image_2026-01-18_at_17.29.19-removebg-preview.png") }}';
+            logoImg.src = '{{ asset("storage/logo.png?v=" . time()) }}';
             logoImg.alt = 'Job Seeker Hub Logo';
             logoImg.className = 'fi-sidebar-logo-custom';
 
@@ -336,7 +336,7 @@
         if (targetElement && !targetElement.querySelector('.fi-login-logo-custom')) {
             // Create logo element
             const logoImg = document.createElement('img');
-            logoImg.src = '{{ asset("storage/WhatsApp_Image_2026-01-18_at_17.29.19-removebg-preview.png") }}';
+            logoImg.src = '{{ asset("storage/logo.png?v=" . time()) }}';
             logoImg.alt = 'Job Seeker Hub Logo';
             logoImg.className = 'fi-login-logo-custom';
 
