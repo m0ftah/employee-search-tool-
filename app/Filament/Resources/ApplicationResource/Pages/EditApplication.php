@@ -41,6 +41,24 @@ class EditApplication extends EditRecord
         $this->originalStatus = $this->record->status;
     }
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $user = auth()->user();
+
+        // If candidate, only allow them to update feedback_from_candidate
+        if ($user->isCandidate()) {
+            // Keep only the feedback field, restore all other fields from the record
+            $allowedData = [
+                'feedback_from_candidate' => $data['feedback_from_candidate'] ?? null,
+            ];
+            
+            // Merge with existing record data to preserve other fields
+            return array_merge($this->record->toArray(), $allowedData);
+        }
+
+        return $data;
+    }
+
     protected function beforeSave(): void
     {
         // Refresh the record to get the latest status before save

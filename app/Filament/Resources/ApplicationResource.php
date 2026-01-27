@@ -64,7 +64,8 @@ class ApplicationResource extends Resource
                 Forms\Components\FileUpload::make('resume_path')
                     ->directory('application-resumes')
                     ->visibility('public')
-                    ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']),
+                    ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                    ->disabled(fn () => auth()->user()->isCandidate()),
                 Forms\Components\Select::make('status')
                     ->options([
                         'pending' => __('app.pending'),
@@ -74,18 +75,26 @@ class ApplicationResource extends Resource
                         'hired' => __('app.hired'),
                     ])
                     ->required()
-                    ->default('pending'),
+                    ->default('pending')
+                    ->disabled(fn () => auth()->user()->isCandidate()),
                 Forms\Components\Textarea::make('feedback_from_hr')
                     ->label(__('app.hr_feedback'))
                     ->rows(3)
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->disabled(fn () => auth()->user()->isCandidate())
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR()),
                 Forms\Components\Textarea::make('feedback_from_candidate')
                     ->label(__('app.candidate_feedback'))
                     ->rows(3)
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->placeholder(__('app.candidate_feedback_placeholder'))
+                    ->helperText(__('app.candidate_feedback_helper'))
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isCandidate())
+                    ->disabled(fn () => auth()->user()->isAdmin() || auth()->user()->isHR()),
                 Forms\Components\DateTimePicker::make('applied_at')
                     ->default(now())
-                    ->required(),
+                    ->required()
+                    ->disabled(fn () => auth()->user()->isCandidate()),
             ]);
     }
 
@@ -182,6 +191,12 @@ class ApplicationResource extends Resource
                     ->label(__('app.hr_feedback'))
                     ->limit(50)
                     ->tooltip(fn ($record) => $record->feedback_from_hr)
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR())
+                    ->wrap(),
+                Tables\Columns\TextColumn::make('feedback_from_candidate')
+                    ->label(__('app.candidate_feedback'))
+                    ->limit(50)
+                    ->tooltip(fn ($record) => $record->feedback_from_candidate)
                     ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR())
                     ->wrap(),
                 Tables\Columns\TextColumn::make('applied_at')
@@ -310,12 +325,20 @@ class ApplicationResource extends Resource
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(fn ($record) => auth()->user()->isHR() && in_array($record->status, ['pending', 'reviewed']))
-                    ->requiresConfirmation()
+                    ->form([
+                        Forms\Components\Textarea::make('hr_feedback')
+                            ->label(__('app.acceptance_feedback'))
+                            ->rows(4)
+                            ->placeholder(__('app.acceptance_feedback_placeholder'))
+                            ->helperText(__('app.acceptance_feedback_helper'))
+                            ->required(),
+                    ])
                     ->modalHeading(__('app.accept_application'))
-                    ->modalDescription(__('app.application_moved_to_shortlisted'))
-                    ->action(function ($record) {
+                    ->modalDescription(__('app.accept_application_description'))
+                    ->action(function ($record, array $data) {
                         $record->update([
                             'status' => 'shortlisted',
+                            'feedback_from_hr' => $data['hr_feedback'],
                         ]);
 
                         \Filament\Notifications\Notification::make()
@@ -329,12 +352,20 @@ class ApplicationResource extends Resource
                     ->icon('heroicon-o-star')
                     ->color('success')
                     ->visible(fn ($record) => auth()->user()->isHR() && $record->status === 'shortlisted')
-                    ->requiresConfirmation()
+                    ->form([
+                        Forms\Components\Textarea::make('hr_feedback')
+                            ->label(__('app.hiring_feedback'))
+                            ->rows(4)
+                            ->placeholder(__('app.hiring_feedback_placeholder'))
+                            ->helperText(__('app.hiring_feedback_helper'))
+                            ->required(),
+                    ])
                     ->modalHeading(__('app.hire_candidate'))
-                    ->modalDescription(__('app.candidate_marked_as_hired'))
-                    ->action(function ($record) {
+                    ->modalDescription(__('app.hire_candidate_description'))
+                    ->action(function ($record, array $data) {
                         $record->update([
                             'status' => 'hired',
+                            'feedback_from_hr' => $data['hr_feedback'],
                         ]);
 
                         // Send email notification to candidate
@@ -384,8 +415,35 @@ class ApplicationResource extends Resource
                             ->body(__('app.application_rejected_notified'))
                             ->send();
                     }),
+                Tables\Actions\Action::make('provide_feedback')
+                    ->label(__('app.provide_feedback'))
+                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->color('info')
+                    ->visible(fn ($record) => auth()->user()->isCandidate() && $record->candidate_id === auth()->user()->candidate?->id)
+                    ->form([
+                        Forms\Components\Textarea::make('feedback_from_candidate')
+                            ->label(__('app.candidate_feedback'))
+                            ->placeholder(__('app.candidate_feedback_placeholder'))
+                            ->helperText(__('app.candidate_feedback_helper'))
+                            ->rows(5)
+                            ->required()
+                            ->maxLength(1000),
+                    ])
+                    ->modalHeading(__('app.provide_feedback_to_hr'))
+                    ->modalDescription(__('app.provide_feedback_description'))
+                    ->action(function ($record, array $data) {
+                        $record->update([
+                            'feedback_from_candidate' => $data['feedback_from_candidate'],
+                        ]);
+
+                        \Filament\Notifications\Notification::make()
+                            ->success()
+                            ->title(__('app.feedback_submitted'))
+                            ->body(__('app.feedback_submitted_success'))
+                            ->send();
+                    }),
                 Tables\Actions\EditAction::make()
-                    ->visible(fn () => auth()->user()->isAdmin()),
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isCandidate()),
                 Tables\Actions\DeleteAction::make()
                     ->visible(fn () => auth()->user()->isAdmin()),
             ])

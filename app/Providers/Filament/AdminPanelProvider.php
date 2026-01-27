@@ -32,10 +32,9 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->passwordReset()
-            // --- إضافة اللوجو هنا مع الحفاظ على المسار الصحيح ---
-            ->brandLogo(asset('storage/logo.png')) 
-            ->brandLogoHeight('16rem')
-            // -----------------------------------------------
+            ->brandLogo(asset('storage/WhatsApp_Image_2026-01-18_at_17.29.19-removebg-preview.png'))
+            ->brandLogoHeight('12rem')
+            ->darkModeBrandLogo(asset('storage/WhatsApp_Image_2026-01-18_at_17.29.19-removebg-preview.png'))
             ->homeUrl(function (): string {
                 if (Auth::check()) {
                     $user = Auth::user();
