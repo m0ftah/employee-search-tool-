@@ -32,6 +32,10 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->passwordReset()
+            // --- إضافة اللوجو هنا مع الحفاظ على المسار الصحيح ---
+            ->brandLogo(asset('storage/logo.png')) 
+            ->brandLogoHeight('16rem')
+            // -----------------------------------------------
             ->homeUrl(function (): string {
                 if (Auth::check()) {
                     $user = Auth::user();

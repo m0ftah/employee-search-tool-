@@ -35,5 +35,19 @@ return [
     'english' => 'English',
     'arabic' => 'Arabic',
     'select_language' => 'Select Language',
+    'manage_profile' => 'Manage Profile',
+    'profile_info' => 'Profile Information',
+    'profile_subtitle' => 'Update your account name and password settings.',
+    'name' => 'Full Name',
+    'email' => 'Email Address',
+    'password' => 'New Password',
+    'password_helper' => 'Leave blank if you do not want to change it.',
+    'current_password' => 'Current Password',
+    'save_changes' => 'Save Changes',
+    'update_success_title' => 'Updated Successfully',
+    'update_success_body' => 'Your profile information has been updated.',
+    'update_error_title' => 'Update Failed',
+    'update_error_body' => 'Invalid input, please try again.',
 ];
+
 
