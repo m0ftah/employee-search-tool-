@@ -3,14 +3,18 @@
 namespace App\Filament\Resources\ApplicationResource\Pages;
 
 use App\Filament\Resources\ApplicationResource;
+use App\Services\CVTextExtractorService;
+use App\Services\CVScoringService;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Log;
 
 class EditApplication extends EditRecord
 {
     protected static string $resource = ApplicationResource::class;
 
     protected ?string $originalStatus = null;
+    protected ?string $originalResumePath = null;
 
     protected function getHeaderActions(): array
     {
@@ -37,8 +41,9 @@ class EditApplication extends EditRecord
             }
         }
 
-        // Store original status before any changes
+        // Store original status and resume path before any changes
         $this->originalStatus = $this->record->status;
+        $this->originalResumePath = $this->record->resume_path;
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
@@ -64,13 +69,20 @@ class EditApplication extends EditRecord
         // Refresh the record to get the latest status before save
         $this->record->refresh();
         $this->originalStatus = $this->record->status;
+        $this->originalResumePath = $this->record->resume_path;
     }
 
     protected function afterSave(): void
     {
-        // Refresh to get the updated status
+        // Refresh to get the updated status and resume path
         $this->record->refresh();
         $newStatus = $this->record->status;
+        $newResumePath = $this->record->resume_path;
+
+        // Score CV if resume was uploaded or changed
+        if ($newResumePath && $newResumePath !== $this->originalResumePath) {
+            $this->scoreCV($newResumePath);
+        }
 
         // Only send notifications if status actually changed to hired or rejected
         if ($this->originalStatus !== $newStatus && $this->record->candidate && $this->record->candidate->user) {
@@ -85,6 +97,39 @@ class EditApplication extends EditRecord
                     new \App\Notifications\ApplicationRejectedNotification($this->record)
                 );
             }
+        }
+    }
+
+    protected function scoreCV(string $resumePath): void
+    {
+        try {
+            $extractor = new CVTextExtractorService();
+            $cvText = $extractor->extractText($resumePath);
+
+            $scoringService = new CVScoringService();
+            $score = $scoringService->analyzeCV($cvText);
+
+            if ($score !== null) {
+                $this->record->update(['score' => $score]);
+                
+                \Filament\Notifications\Notification::make()
+                    ->success()
+                    ->title(__('app.cv_scored'))
+                    ->body(__('app.cv_scored_success', ['score' => (int)$score]))
+                    ->send();
+            }
+        } catch (\Exception $e) {
+            Log::error('CV scoring failed for application: ' . $e->getMessage(), [
+                'application_id' => $this->record->id,
+                'resume_path' => $resumePath,
+                'exception' => $e,
+            ]);
+
+            \Filament\Notifications\Notification::make()
+                ->warning()
+                ->title(__('app.cv_scoring_failed'))
+                ->body(__('app.cv_scoring_failed_message'))
+                ->send();
         }
     }
 }

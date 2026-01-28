@@ -102,6 +102,14 @@ return [
     'feedback_submitted' => 'تم إرسال الملاحظات',
     'feedback_submitted_success' => 'تم إرسال ملاحظاتك بنجاح وستكون مرئية للموارد البشرية.',
     
+    // CV Scoring
+    'cv_scored' => 'تم تقييم السيرة الذاتية',
+    'cv_scored_success' => 'تم تحليل وتقييم سيرتك الذاتية: :score/10',
+    'cv_scored_but_not_saved' => 'تم التقييم (لم يتم الحفظ)',
+    'cv_scored_but_not_saved_message' => 'تم تقييم سيرتك الذاتية (:score/10) ولكن لم يتم حفظها. يرجى الاتصال بالمسؤول.',
+    'cv_scoring_failed' => 'فشل تقييم السيرة الذاتية',
+    'cv_scoring_failed_message' => 'تعذر تحليل سيرتك الذاتية في الوقت الحالي. يرجى المحاولة مرة أخرى لاحقاً.',
+    
     // Candidates
     'candidates' => 'المرشحون',
     'candidate_profile' => 'ملف المرشح',

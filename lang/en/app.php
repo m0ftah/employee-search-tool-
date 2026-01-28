@@ -103,6 +103,14 @@ return [
     'feedback_submitted' => 'Feedback Submitted',
     'feedback_submitted_success' => 'Your feedback has been successfully submitted and will be visible to HR.',
     
+    // CV Scoring
+    'cv_scored' => 'CV Scored',
+    'cv_scored_success' => 'Your CV has been analyzed and scored: :score/10',
+    'cv_scored_but_not_saved' => 'CV Scored (Not Saved)',
+    'cv_scored_but_not_saved_message' => 'Your CV was scored (:score/10) but could not be saved. Please contact administrator.',
+    'cv_scoring_failed' => 'CV Scoring Failed',
+    'cv_scoring_failed_message' => 'Unable to analyze your CV at this time. Please try again later.',
+    
     // Candidates
     'candidates' => 'Candidates',
     'candidate_profile' => 'Candidate Profile',

@@ -478,11 +478,24 @@ class JobResource extends Resource
 
                         // Determine resume path
                         $resumePath = null;
+                        $isNewUpload = false;
+                        
                         if (!empty($data['use_existing_resume']) && $user->candidate->resume_path) {
                             $resumePath = $user->candidate->resume_path;
                         } elseif (!empty($data['resume'])) {
-                            $resumePath = $data['resume'];
+                            // Handle Filament FileUpload - it might be an array or string
+                            $resumePath = is_array($data['resume']) ? ($data['resume'][0] ?? null) : $data['resume'];
+                            $isNewUpload = true;
                         } else {
+                            \Filament\Notifications\Notification::make()
+                                ->danger()
+                                ->title(__('app.resume_required'))
+                                ->body(__('app.please_use_profile_resume_or_upload_new_one'))
+                                ->send();
+                            return;
+                        }
+
+                        if (!$resumePath) {
                             \Filament\Notifications\Notification::make()
                                 ->danger()
                                 ->title(__('app.resume_required'))
@@ -500,8 +513,9 @@ class JobResource extends Resource
                             'applied_at' => now(),
                         ]);
 
-                        // Calculate score if a new resume was uploaded
-                        if (empty($data['use_existing_resume']) && !empty($data['resume'])) {
+                        // Score CV - always score when resume is provided
+                        // Score new uploads immediately, and also score existing resumes to ensure they have a score
+                        if ($resumePath) {
                             try {
                                 $textExtractor = new CVTextExtractorService();
                                 $cvText = $textExtractor->extractText($resumePath);
@@ -510,10 +524,53 @@ class JobResource extends Resource
                                 $score = $scoringService->analyzeCV($cvText);
                                 
                                 if ($score !== null) {
-                                    $application->update(['score' => $score]);
+                                    // Check if score column exists before trying to update
+                                    try {
+                                        $application->update(['score' => $score]);
+                                        
+                                        // Show notification for new uploads
+                                        if ($isNewUpload) {
+                                            \Filament\Notifications\Notification::make()
+                                                ->success()
+                                                ->title(__('app.cv_scored'))
+                                                ->body(__('app.cv_scored_success', ['score' => (int)$score]))
+                                                ->send();
+                                        }
+                                    } catch (\Illuminate\Database\QueryException $dbException) {
+                                        // Check if it's a column not found error
+                                        if (str_contains($dbException->getMessage(), "Unknown column 'score'")) {
+                                            \Illuminate\Support\Facades\Log::error('Score column missing in applications table. Please run migration: php artisan migrate', [
+                                                'application_id' => $application->id,
+                                                'resume_path' => $resumePath,
+                                                'score' => $score,
+                                            ]);
+                                            
+                                            \Filament\Notifications\Notification::make()
+                                                ->warning()
+                                                ->title(__('app.cv_scored_but_not_saved'))
+                                                ->body(__('app.cv_scored_but_not_saved_message', ['score' => (int)$score]))
+                                                ->send();
+                                        } else {
+                                            throw $dbException;
+                                        }
+                                    }
                                 }
                             } catch (\Exception $e) {
-                                \Illuminate\Support\Facades\Log::error('Error scoring application CV: ' . $e->getMessage());
+                                \Illuminate\Support\Facades\Log::error('Error scoring application CV: ' . $e->getMessage(), [
+                                    'application_id' => $application->id,
+                                    'resume_path' => $resumePath,
+                                    'is_new_upload' => $isNewUpload,
+                                    'exception' => $e,
+                                ]);
+                                
+                                // Show warning notification for new uploads if scoring fails
+                                if ($isNewUpload) {
+                                    \Filament\Notifications\Notification::make()
+                                        ->warning()
+                                        ->title(__('app.cv_scoring_failed'))
+                                        ->body(__('app.cv_scoring_failed_message'))
+                                        ->send();
+                                }
                             }
                         }
 
