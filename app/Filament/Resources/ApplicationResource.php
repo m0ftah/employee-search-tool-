@@ -95,6 +95,11 @@ class ApplicationResource extends Resource
                     ->default(now())
                     ->required()
                     ->disabled(fn () => auth()->user()->isCandidate()),
+                Forms\Components\TextInput::make('score')
+                    ->label(__('app.cv_score'))
+                    ->numeric()
+                    ->disabled()
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR()),
             ]);
     }
 
@@ -119,8 +124,9 @@ class ApplicationResource extends Resource
                     ->label(__('app.email_address'))
                     ->searchable()
                     ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR()),
-                Tables\Columns\TextColumn::make('candidate.score')
+                Tables\Columns\TextColumn::make('score')
                     ->label(__('app.cv_score'))
+                    ->getStateUsing(fn ($record) => $record->score ?? $record->candidate?->score)
                     ->numeric(
                         decimalPlaces: 0,
                     )

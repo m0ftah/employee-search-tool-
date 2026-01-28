@@ -11,6 +11,9 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
+use App\Services\CVTextExtractorService;
+use App\Services\CVScoringService;
+use Illuminate\Support\Facades\Auth;
 
 class JobResource extends Resource
 {
@@ -489,13 +492,30 @@ class JobResource extends Resource
                         }
 
                         // Create application
-                        Application::create([
+                        $application = Application::create([
                             'job_id' => $record->id,
                             'candidate_id' => $user->candidate->id,
                             'resume_path' => $resumePath,
                             'status' => 'pending',
                             'applied_at' => now(),
                         ]);
+
+                        // Calculate score if a new resume was uploaded
+                        if (empty($data['use_existing_resume']) && !empty($data['resume'])) {
+                            try {
+                                $textExtractor = new CVTextExtractorService();
+                                $cvText = $textExtractor->extractText($resumePath);
+                                
+                                $scoringService = new CVScoringService();
+                                $score = $scoringService->analyzeCV($cvText);
+                                
+                                if ($score !== null) {
+                                    $application->update(['score' => $score]);
+                                }
+                            } catch (\Exception $e) {
+                                \Illuminate\Support\Facades\Log::error('Error scoring application CV: ' . $e->getMessage());
+                            }
+                        }
 
                         \Filament\Notifications\Notification::make()
                             ->success()
