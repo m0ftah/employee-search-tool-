@@ -20,9 +20,9 @@ class LoginResponse implements LoginResponseContract
         // Get the authenticated user
         $user = auth()->user();
 
-        // Redirect candidates to applications page
+        // Redirect candidates to dashboard first
         if ($user && method_exists($user, 'isCandidate') && $user->isCandidate()) {
-            return redirect()->to(\App\Filament\Resources\ApplicationResource::getUrl('index'));
+            return redirect()->to(\App\Filament\Pages\Dashboard::getUrl());
         }
 
         // Default redirect to panel home

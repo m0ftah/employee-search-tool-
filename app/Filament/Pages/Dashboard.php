@@ -37,4 +37,19 @@ class Dashboard extends BaseDashboard
     {
         return __('app.dashboard');
     }
+
+    public function getHeaderWidgets(): array
+    {
+        return [
+            \App\Filament\Widgets\CandidateWelcomeWidget::class,
+        ];
+    }
+
+    public function getWidgets(): array
+    {
+        return array_filter(
+            parent::getWidgets(),
+            fn (string $widget): bool => $widget !== \App\Filament\Widgets\CandidateWelcomeWidget::class,
+        );
+    }
 }
