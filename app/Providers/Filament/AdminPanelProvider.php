@@ -40,7 +40,7 @@ class AdminPanelProvider extends PanelProvider
                 if (Auth::check()) {
                     $user = Auth::user();
                     if ($user && method_exists($user, 'isCandidate') && $user->isCandidate()) {
-                        return \App\Filament\Resources\ApplicationResource::getUrl('index');
+                        return \App\Filament\Pages\Dashboard::getUrl();
                     }
                 }
                 return \App\Filament\Pages\Dashboard::getUrl();

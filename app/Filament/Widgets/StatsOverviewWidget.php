@@ -10,6 +10,12 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class StatsOverviewWidget extends BaseWidget
 {
+    public static function canView(): bool
+    {
+        $user = auth()->user();
+        return $user && ($user->isAdmin() || $user->isHR());
+    }
+
     protected function getStats(): array
     {
         $candidatesCount = Candidate::count();

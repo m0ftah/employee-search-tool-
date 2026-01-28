@@ -167,6 +167,8 @@ return [
     
     // Dashboard
     'dashboard' => 'لوحة التحكم',
+    'welcome_to_platform' => '👋 أهلاً بك في منصتنا',
+    'successful_journey' => 'نتمنى لك رحلة ناجحة في العثور على فرصتك التالية',
     
     // Chat
     'chat' => 'محادثة',

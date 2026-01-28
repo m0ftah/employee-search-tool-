@@ -10,21 +10,17 @@ class Dashboard extends BaseDashboard
 {
     public static function canAccess(): bool
     {
-        // Only allow Admin and HR to access the dashboard
-        // Candidates should not see the dashboard
         $user = Auth::user();
         
         if (!$user) {
             return false;
         }
         
-        // Allow super admin, admin, and HR
-        if ($user->hasRole('super_admin') || $user->isAdmin() || $user->isHR()) {
-            return true;
-        }
-        
-        // Block candidates
-        return false;
+        // Allow all registered roles (Admin, HR, Candidate)
+        return $user->hasRole('super_admin') || 
+               $user->isAdmin() || 
+               $user->isHR() || 
+               $user->isCandidate();
     }
     
     public static function getNavigationLabel(): string

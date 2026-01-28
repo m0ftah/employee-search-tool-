@@ -168,6 +168,8 @@ return [
     
     // Dashboard
     'dashboard' => 'Dashboard',
+    'welcome_to_platform' => 'Welcome to our platform',
+    'successful_journey' => 'We wish you a successful journey in finding your next opportunity',
     
     // Chat
     'chat' => 'Chat',

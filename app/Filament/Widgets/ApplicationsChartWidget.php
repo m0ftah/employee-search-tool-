@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\DB;
 
 class ApplicationsChartWidget extends ChartWidget
 {
+    public static function canView(): bool
+    {
+        $user = auth()->user();
+        return $user && ($user->isAdmin() || $user->isHR());
+    }
+    
     protected static ?string $heading = null;
     
     protected int | string | array $columnSpan = 1;
