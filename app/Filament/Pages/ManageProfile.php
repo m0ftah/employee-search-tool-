@@ -36,7 +36,14 @@ class ManageProfile extends Page
     public function mount(): void
     {
         // Pre-condition: تحميل بيانات المستخدم المسجل حالياً
-        $this->form->fill(auth()->user()->attributesToArray());
+        $user = auth()->user();
+        $userData = $user->attributesToArray();
+        
+        if ($user->isCandidate() && $user->candidate) {
+            $userData = array_merge($userData, $user->candidate->attributesToArray());
+        }
+        
+        $this->form->fill($userData);
     }
 
     public function form(Form $form): Form
@@ -53,11 +60,13 @@ class ManageProfile extends Page
                             ->required()
                             ->maxLength(255),
 
-                        // البريد الإلكتروني (للقراءة فقط)
+                        // البريد الإلكتروني
                         TextInput::make('email')
                             ->label(__('common.email'))
-                            ->disabled()
-                            ->email(),
+                            ->required()
+                            ->email()
+                            ->maxLength(255)
+                            ->unique('users', 'email', ignorable: auth()->user()),
 
                         // حقل كلمة المرور الحالية
                         TextInput::make('current_password')
@@ -72,10 +81,47 @@ class ManageProfile extends Page
                             ->label(__('common.password'))
                             ->password()
                             ->helperText(__('common.password_helper'))
-                            ->rule(Password::default())
+                            ->rule(\Illuminate\Validation\Rules\Password::default())
                             ->nullable()
                             ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                             ->dehydrated(fn ($state) => filled($state)),
+                    ])->columns(2),
+
+                Section::make(__('app.candidate_profile'))
+                    ->visible(fn () => auth()->user()->isCandidate())
+                    ->schema([
+                        TextInput::make('phone')
+                            ->label(__('app.phone_number'))
+                            ->tel()
+                            ->maxLength(255),
+                        TextInput::make('location')
+                            ->label(__('app.location'))
+                            ->maxLength(255),
+                        \Filament\Forms\Components\Select::make('education_level')
+                            ->label(__('app.education_level'))
+                            ->options([
+                                'high_school' => __('app.high_school'),
+                                'diploma' => __('app.diploma'),
+                                'bachelor' => __('app.bachelor'),
+                                'master' => __('app.master'),
+                                'phd' => __('app.phd'),
+                            ]),
+                        TextInput::make('years_of_experience')
+                            ->label(__('app.years_of_experience'))
+                            ->numeric(),
+                        \Filament\Forms\Components\TagsInput::make('skills')
+                            ->label(__('app.skills'))
+                            ->placeholder(__('app.skills_placeholder')),
+                        \Filament\Forms\Components\Textarea::make('certifications')
+                            ->label(__('app.certifications'))
+                            ->placeholder(__('app.list_certifications'))
+                            ->rows(3)
+                            ->columnSpanFull(),
+                        \Filament\Forms\Components\Textarea::make('bio')
+                            ->label(__('app.bio'))
+                            ->placeholder(__('app.tell_us_about_yourself_placeholder'))
+                            ->rows(3)
+                            ->columnSpanFull(),
                     ])->columns(2),
             ]);
     }
@@ -97,7 +143,37 @@ class ManageProfile extends Page
             // تنفيذ الـ Validation (E1 Scenario)
             $state = $this->form->getState();
 
-            auth()->user()->update($state);
+            $user = auth()->user();
+            
+            // Separate user data from candidate data
+            $userData = [
+                'name' => $state['name'],
+                'email' => $state['email'],
+            ];
+            
+            if (isset($state['password'])) {
+                $userData['password'] = $state['password'];
+            }
+            
+            $user->update($userData);
+
+            if ($user->isCandidate()) {
+                $candidateData = [
+                    'phone' => $state['phone'] ?? null,
+                    'location' => $state['location'] ?? null,
+                    'education_level' => $state['education_level'] ?? null,
+                    'years_of_experience' => $state['years_of_experience'] ?? null,
+                    'skills' => $state['skills'] ?? [],
+                    'certifications' => $state['certifications'] ?? null,
+                    'bio' => $state['bio'] ?? null,
+                ];
+                
+                if ($user->candidate) {
+                    $user->candidate->update($candidateData);
+                } else {
+                    $user->candidate()->create($candidateData);
+                }
+            }
 
             // Post Condition: إرسال تنبيه بالنجاح
             Notification::make()
@@ -111,7 +187,7 @@ class ManageProfile extends Page
             Notification::make()
                 ->danger()
                 ->title(__('common.update_error_title'))
-                ->body(__('common.update_error_body'))
+                ->body(__('common.update_error_body') . ': ' . $e->getMessage())
                 ->send();
         }
     }

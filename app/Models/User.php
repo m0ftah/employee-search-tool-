@@ -123,20 +123,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Override Wirechat profile URL
-     */
-    public function getProfileUrlAttribute(): ?string
-    {
-        if ($this->isCandidate()) {
-            return \App\Filament\Resources\CandidateResource::getUrl('edit', ['record' => $this->candidate?->id]);
-        }
-        if ($this->isHR()) {
-            return \App\Filament\Resources\HRResource::getUrl('edit', ['record' => $this->hr?->id]);
-        }
-        return null;
-    }
-
-    /**
      * Customize searchChatables to only return Candidates for HR and HR for Candidates
      */
     public function searchChatables(string $query): ?\Illuminate\Database\Eloquent\Collection

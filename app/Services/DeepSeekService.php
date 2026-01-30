@@ -142,12 +142,21 @@ class DeepSeekService
                 'text_length' => strlen($text),
             ]);
 
-            if (preg_match('/(\d+(?:\.\d+)?)/', $text, $matches)) {
+            if (preg_match('/(\d+(?:\.\d+)?)\s*\/\s*10/', $text, $matches)) {
                 $score = (float) $matches[1];
+            } elseif (preg_match('/(?:score|درجة|تقييم|التقييم|الدرجة)\s*[:=]?\s*(\d+(?:\.\d+)?)/i', $text, $matches)) {
+                $score = (float) $matches[1];
+            } elseif (preg_match('/^(\d+(?:\.\d+)?)/', $text, $matches)) {
+                $score = (float) $matches[1];
+            } elseif (preg_match('/(\d+(?:\.\d+)?)/', $text, $matches)) {
+                $score = (float) $matches[1];
+            }
+
+            if (isset($score)) {
                 $score = max(0, min(10, $score));
 
                 Log::info('CV Score Calculated (DeepSeek)', [
-                    'raw_score' => $matches[1],
+                    'raw_text' => $text,
                     'final_score' => $score,
                 ]);
 

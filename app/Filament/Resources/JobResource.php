@@ -100,6 +100,10 @@ class JobResource extends Resource
                     ->maxLength(255),
                 Forms\Components\DatePicker::make('application_deadline')
                     ->label(__('app.application_deadline'))
+                    ->displayFormat('d/m/Y')
+                    ->format('Y-m-d')
+                    ->native(false)
+                    ->placeholder(__('app.date_placeholder'))
                     ->required(),
                 Forms\Components\Select::make('status')
                     ->label(__('common.status'))
@@ -297,77 +301,18 @@ class JobResource extends Resource
                             fn ($query, $salary) => $query->where('salary_range', 'like', "%{$salary}%")
                         );
                     }),
-                Tables\Filters\Filter::make('application_deadline')
-                    ->label(__('app.application_deadline'))
-                    ->form([
-                        Forms\Components\DatePicker::make('deadline_from')
-                            ->label(__('app.from_date')),
-                        Forms\Components\DatePicker::make('deadline_to')
-                            ->label(__('app.to_date')),
-                    ])
-                    ->query(function ($query, array $data) {
-                        return $query
-                            ->when(
-                                $data['deadline_from'],
-                                fn ($query, $date) => $query->whereDate('application_deadline', '>=', $date)
-                            )
-                            ->when(
-                                $data['deadline_to'],
-                                fn ($query, $date) => $query->whereDate('application_deadline', '<=', $date)
-                            );
-                    }),
+
                 Tables\Filters\Filter::make('has_applications')
                     ->label(__('app.has_applications'))
                     ->query(fn ($query) => $query->has('applications'))
                     ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR())
                     ->toggle(),
-                Tables\Filters\Filter::make('applications_count')
-                    ->label(__('app.applications_count'))
-                    ->form([
-                        Forms\Components\TextInput::make('applications_from')
-                            ->label(__('app.min_applications'))
-                            ->numeric()
-                            ->placeholder('0'),
-                        Forms\Components\TextInput::make('applications_to')
-                            ->label(__('app.max_applications'))
-                            ->numeric()
-                            ->placeholder('100'),
-                    ])
-                    ->query(function ($query, array $data) {
-                        return $query
-                            ->when(
-                                $data['applications_from'],
-                                fn ($query, $count) => $query->has('applications', '>=', $count)
-                            )
-                            ->when(
-                                $data['applications_to'],
-                                fn ($query, $count) => $query->has('applications', '<=', $count)
-                            );
-                    })
-                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR()),
+
                 Tables\Filters\Filter::make('deadline_passed')
                     ->label(__('app.deadline_passed'))
                     ->query(fn ($query) => $query->where('application_deadline', '<', now()->toDateString()))
                     ->toggle(),
-                Tables\Filters\Filter::make('created_at')
-                    ->label(__('app.created_at'))
-                    ->form([
-                        Forms\Components\DatePicker::make('created_from')
-                            ->label(__('app.from_date')),
-                        Forms\Components\DatePicker::make('created_to')
-                            ->label(__('app.to_date')),
-                    ])
-                    ->query(function ($query, array $data) {
-                        return $query
-                            ->when(
-                                $data['created_from'],
-                                fn ($query, $date) => $query->whereDate('created_at', '>=', $date)
-                            )
-                            ->when(
-                                $data['created_to'],
-                                fn ($query, $date) => $query->whereDate('created_at', '<=', $date)
-                            );
-                    }),
+
             ], layout: Tables\Enums\FiltersLayout::AboveContentCollapsible)
             ->actions([
                 Tables\Actions\Action::make('apply')
@@ -528,13 +473,12 @@ class JobResource extends Resource
                                     try {
                                         $application->update(['score' => $score]);
                                         
-                                        // Show notification for new uploads
-                                        if ($isNewUpload) {
-                                            \Filament\Notifications\Notification::make()
-                                                ->success()
-                                                ->title(__('app.cv_scored'))
-                                                ->body(__('app.cv_scored_success', ['score' => (int)$score]))
-                                                ->send();
+                                        // Update candidate's global score if it's a new upload
+                                        if ($isNewUpload && $user->candidate) {
+                                            $user->candidate->update([
+                                                'score' => $score,
+                                                'resume_path' => $resumePath
+                                            ]);
                                         }
                                     } catch (\Illuminate\Database\QueryException $dbException) {
                                         // Check if it's a column not found error
@@ -544,12 +488,6 @@ class JobResource extends Resource
                                                 'resume_path' => $resumePath,
                                                 'score' => $score,
                                             ]);
-                                            
-                                            \Filament\Notifications\Notification::make()
-                                                ->warning()
-                                                ->title(__('app.cv_scored_but_not_saved'))
-                                                ->body(__('app.cv_scored_but_not_saved_message', ['score' => (int)$score]))
-                                                ->send();
                                         } else {
                                             throw $dbException;
                                         }

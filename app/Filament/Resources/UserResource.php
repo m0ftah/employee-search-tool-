@@ -28,17 +28,17 @@ class UserResource extends Resource
     
     public static function getNavigationLabel(): string
     {
-        return __('app.users');
+        return 'Admins';
     }
     
     public static function getModelLabel(): string
     {
-        return __('app.user');
+        return 'Admin';
     }
     
     public static function getPluralModelLabel(): string
     {
-        return __('app.users');
+        return 'Admins';
     }
 
     public static function form(Form $form): Form
@@ -60,7 +60,6 @@ class UserResource extends Resource
                     ->password()
                     ->required(fn (string $context): bool => $context === 'create')
                     ->dehydrated(fn ($state) => filled($state))
-                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->maxLength(255),
             ]);
     }
@@ -77,31 +76,18 @@ class UserResource extends Resource
                     ->label(__('app.email_address'))
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('type')
-                    ->label(__('app.type'))
-                    ->badge()
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'admin' => __('app.admin'),
-                        'hr' => __('app.hr'),
-                        'candidate' => __('app.candidate'),
-                        default => $state,
-                    })
-                    ->color(fn (string $state): string => match ($state) {
-                        'admin' => 'danger',
-                        'hr' => 'warning',
-                        'candidate' => 'success',
-                        default => 'gray',
-                    })
-                    ->searchable()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('roles.name')
                     ->label(__('app.roles'))
                     ->badge()
                     ->separator(',')
                     ->color('info'),
                 Tables\Columns\IconColumn::make('email_verified_at')
-                    ->boolean()
                     ->label(__('app.verified'))
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-badge')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -113,27 +99,8 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('type')
-                    ->label(__('app.type'))
-                    ->options([
-                        'admin' => __('app.admin'),
-                        'hr' => __('app.hr'),
-                        'candidate' => __('app.candidate'),
-                    ])
-                    ->multiple(),
-                Tables\Filters\Filter::make('name')
-                    ->label(__('common.name'))
-                    ->form([
-                        Forms\Components\TextInput::make('name')
-                            ->label(__('common.name'))
-                            ->placeholder(__('app.search_name')),
-            ])
-                    ->query(function ($query, array $data) {
-                        return $query->when(
-                            $data['name'],
-                            fn ($query, $name) => $query->where('name', 'like', "%{$name}%")
-                        );
-                    }),
+
+
                 Tables\Filters\Filter::make('email')
                     ->label(__('app.email_address'))
                     ->form([
@@ -151,35 +118,8 @@ class UserResource extends Resource
                     ->label(__('app.email_verified'))
                     ->query(fn ($query) => $query->whereNotNull('email_verified_at'))
                     ->toggle(),
-                Tables\Filters\Filter::make('has_roles')
-                    ->label(__('app.has_roles'))
-                    ->query(fn ($query) => $query->whereHas('roles'))
-                    ->toggle(),
-                Tables\Filters\SelectFilter::make('roles')
-                    ->label(__('app.roles'))
-                    ->relationship('roles', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->multiple(),
-                Tables\Filters\Filter::make('created_at')
-                    ->label(__('app.created_at'))
-                    ->form([
-                        Forms\Components\DatePicker::make('created_from')
-                            ->label(__('app.from_date')),
-                        Forms\Components\DatePicker::make('created_to')
-                            ->label(__('app.to_date')),
-                    ])
-                    ->query(function ($query, array $data) {
-                        return $query
-                            ->when(
-                                $data['created_from'],
-                                fn ($query, $date) => $query->whereDate('created_at', '>=', $date)
-                            )
-                            ->when(
-                                $data['created_to'],
-                                fn ($query, $date) => $query->whereDate('created_at', '<=', $date)
-                            );
-                    }),
+
+
             ], layout: Tables\Enums\FiltersLayout::AboveContentCollapsible)
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -206,6 +146,11 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
+    }
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('type', 'admin');
     }
 }
 

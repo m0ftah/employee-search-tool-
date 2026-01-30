@@ -56,6 +56,7 @@ return [
     'senior_level' => 'خبير',
     'category' => 'الفئة',
     'application_deadline' => 'آخر موعد للتقديم',
+    'date_placeholder' => 'يوم / شهر / سنة',
     'active' => 'نشط',
     'closed' => 'مغلق',
     
@@ -124,6 +125,7 @@ return [
     
     // Users
     'users' => 'المستخدمون',
+    'admins' => 'المديرين',
     'user_management' => 'إدارة المستخدمين',
     
     // Navigation Groups

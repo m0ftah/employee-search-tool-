@@ -123,15 +123,13 @@ class CandidateResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('score')
                     ->label(__('app.cv_score'))
-                    ->numeric(
-                        decimalPlaces: 0,
-                    )
+                    ->formatStateUsing(fn ($state) => (int)($state ?? 0) . ' / 10')
                     ->badge()
                     ->sortable()
                     ->color(fn ($state) => match (true) {
-                        $state >= 8 => 'success',
-                        $state >= 6 => 'warning',
-                        $state >= 4 => 'info',
+                        (float)$state >= 8 => 'success',
+                        (float)$state >= 6 => 'warning',
+                        (float)$state > 0 => 'info',
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('resume_path')
@@ -248,9 +246,15 @@ class CandidateResource extends Resource
                     ->label(__('app.created_at'))
                     ->form([
                         Forms\Components\DatePicker::make('created_from')
-                            ->label(__('app.from_date')),
+                            ->label(__('app.from_date'))
+                            ->displayFormat('d/m/Y')
+                            ->native(false)
+                            ->placeholder(__('app.date_placeholder')),
                         Forms\Components\DatePicker::make('created_to')
-                            ->label(__('app.to_date')),
+                            ->label(__('app.to_date'))
+                            ->displayFormat('d/m/Y')
+                            ->native(false)
+                            ->placeholder(__('app.date_placeholder')),
                     ])
                     ->query(function ($query, array $data) {
                         return $query

@@ -55,7 +55,8 @@ class ApplicationResource extends Resource
                     ->preload()
                     ->disabled(fn (string $context): bool => $context === 'edit' && auth()->user()->isCandidate()),
                 Forms\Components\Select::make('candidate_id')
-                    ->relationship('candidate', 'user.name')
+                    ->relationship('candidate', 'id')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record?->user?->name)
                     ->required()
                     ->searchable()
                     ->preload()
@@ -77,29 +78,63 @@ class ApplicationResource extends Resource
                     ->required()
                     ->default('pending')
                     ->disabled(fn () => auth()->user()->isCandidate()),
-                Forms\Components\Textarea::make('feedback_from_hr')
-                    ->label(__('app.hr_feedback'))
-                    ->rows(3)
-                    ->columnSpanFull()
-                    ->disabled(fn () => auth()->user()->isCandidate())
-                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR()),
                 Forms\Components\Textarea::make('feedback_from_candidate')
                     ->label(__('app.candidate_feedback'))
                     ->rows(3)
                     ->columnSpanFull()
                     ->placeholder(__('app.candidate_feedback_placeholder'))
                     ->helperText(__('app.candidate_feedback_helper'))
-                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isCandidate())
-                    ->disabled(fn () => auth()->user()->isAdmin() || auth()->user()->isHR()),
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR() || auth()->user()->isCandidate())
+                    ->disabled(fn () => !auth()->user()->isCandidate()),
+                Forms\Components\Textarea::make('feedback_from_hr')
+                    ->label(__('app.hr_feedback'))
+                    ->rows(3)
+                    ->columnSpanFull()
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR() || auth()->user()->isCandidate())
+                    ->disabled(fn () => auth()->user()->isCandidate()),
                 Forms\Components\DateTimePicker::make('applied_at')
+                    ->label(__('app.applied_at'))
+                    ->displayFormat('d/m/Y H:i')
+                    ->format('Y-m-d H:i:s')
+                    ->native(false)
+                    ->placeholder(__('app.date_placeholder'))
                     ->default(now())
                     ->required()
                     ->disabled(fn () => auth()->user()->isCandidate()),
-                Forms\Components\TextInput::make('score')
-                    ->label(__('app.cv_score'))
-                    ->numeric()
-                    ->disabled()
-                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR()),
+
+
+                Forms\Components\Section::make(__('app.candidate_profile'))
+                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR())
+                    ->schema([
+                        Forms\Components\Placeholder::make('candidate_phone')
+                            ->label(__('app.phone_number'))
+                            ->content(fn ($record) => $record->candidate?->phone),
+                        Forms\Components\Placeholder::make('candidate_location')
+                            ->label(__('app.location'))
+                            ->content(fn ($record) => $record->candidate?->location),
+                        Forms\Components\Placeholder::make('candidate_education_level')
+                            ->label(__('app.education_level'))
+                            ->content(fn ($record) => match($record->candidate?->education_level) {
+                                'high_school' => __('app.high_school'),
+                                'diploma' => __('app.diploma'),
+                                'bachelor' => __('app.bachelor'),
+                                'master' => __('app.master'),
+                                'phd' => __('app.phd'),
+                                default => $record->candidate?->education_level,
+                            }),
+                        Forms\Components\Placeholder::make('candidate_years_of_experience')
+                            ->label(__('app.years_of_experience'))
+                            ->content(fn ($record) => $record->candidate?->years_of_experience),
+                        Forms\Components\Placeholder::make('candidate_skills')
+                            ->label(__('app.skills'))
+                            ->content(fn ($record) => implode(', ', $record->candidate?->skills ?? [])),
+                        Forms\Components\Placeholder::make('candidate_certifications')
+                            ->label(__('app.certifications'))
+                            ->content(fn ($record) => $record->candidate?->certifications),
+                        Forms\Components\Placeholder::make('candidate_bio')
+                            ->label(__('app.bio'))
+                            ->content(fn ($record) => $record->candidate?->bio),
+                    ])->columns(2),
             ]);
     }
 
@@ -126,16 +161,14 @@ class ApplicationResource extends Resource
                     ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR()),
                 Tables\Columns\TextColumn::make('score')
                     ->label(__('app.cv_score'))
-                    ->getStateUsing(fn ($record) => $record->score ?? $record->candidate?->score)
-                    ->numeric(
-                        decimalPlaces: 0,
-                    )
+                    ->getStateUsing(fn ($record) => $record->score ?? $record->candidate?->score ?? 0)
+                    ->formatStateUsing(fn ($state) => (int)($state ?? 0) . ' / 10')
                     ->badge()
                     ->color(fn ($state): string => match (true) {
-                        $state === null => 'gray',
-                        $state >= 8 => 'success',
-                        $state >= 6 => 'warning',
-                        default => 'danger',
+                        (float)$state >= 8 => 'success',
+                        (float)$state >= 6 => 'warning',
+                        (float)$state > 0 => 'danger',
+                        default => 'gray',
                     })
                     ->sortable()
                     ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR()),
@@ -245,53 +278,8 @@ class ApplicationResource extends Resource
                     ->preload()
                     ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isCandidate())
                     ->multiple(),
-                Tables\Filters\Filter::make('score')
-                    ->label(__('app.cv_score'))
-                    ->form([
-                        Forms\Components\TextInput::make('score_from')
-                            ->label(__('app.min_score'))
-                            ->numeric()
-                            ->placeholder('0'),
-                        Forms\Components\TextInput::make('score_to')
-                            ->label(__('app.max_score'))
-                            ->placeholder('10')
-                            ->numeric(),
-                    ])
-                    ->query(function ($query, array $data) {
-                        return $query
-                            ->when(
-                                $data['score_from'],
-                                fn ($query, $score) => $query->whereHas('candidate', function ($q) use ($score) {
-                                    $q->where('score', '>=', $score);
-                                })
-                            )
-                            ->when(
-                                $data['score_to'],
-                                fn ($query, $score) => $query->whereHas('candidate', function ($q) use ($score) {
-                                    $q->where('score', '<=', $score);
-                                })
-                            );
-                    })
-                    ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR()),
-                Tables\Filters\Filter::make('applied_at')
-                    ->label(__('app.applied_at'))
-                    ->form([
-                        Forms\Components\DatePicker::make('applied_from')
-                            ->label(__('app.from_date')),
-                        Forms\Components\DatePicker::make('applied_to')
-                            ->label(__('app.to_date')),
-                    ])
-                    ->query(function ($query, array $data) {
-                        return $query
-                            ->when(
-                                $data['applied_from'],
-                                fn ($query, $date) => $query->whereDate('applied_at', '>=', $date)
-                            )
-                            ->when(
-                                $data['applied_to'],
-                                fn ($query, $date) => $query->whereDate('applied_at', '<=', $date)
-                            );
-                    }),
+
+
                 Tables\Filters\Filter::make('has_resume')
                     ->label(__('app.has_resume'))
                     ->query(fn ($query) => $query->where(function ($q) {
@@ -305,25 +293,7 @@ class ApplicationResource extends Resource
                     ->query(fn ($query) => $query->whereNotNull('feedback_from_hr')->where('feedback_from_hr', '!=', ''))
                     ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isHR())
                     ->toggle(),
-                Tables\Filters\Filter::make('created_at')
-                    ->label(__('app.created_at'))
-                    ->form([
-                        Forms\Components\DatePicker::make('created_from')
-                            ->label(__('app.from_date')),
-                        Forms\Components\DatePicker::make('created_to')
-                            ->label(__('app.to_date')),
-                    ])
-                    ->query(function ($query, array $data) {
-                        return $query
-                            ->when(
-                                $data['created_from'],
-                                fn ($query, $date) => $query->whereDate('created_at', '>=', $date)
-                            )
-                            ->when(
-                                $data['created_to'],
-                                fn ($query, $date) => $query->whereDate('created_at', '<=', $date)
-                            );
-                    }),
+
             ], layout: Tables\Enums\FiltersLayout::AboveContentCollapsible)
             ->actions([
                 Tables\Actions\Action::make('accept')
@@ -448,6 +418,44 @@ class ApplicationResource extends Resource
                             ->body(__('app.feedback_submitted_success'))
                             ->send();
                     }),
+                Tables\Actions\Action::make('chat')
+                    ->label(__('app.chat'))
+                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->color('info')
+                    ->action(function ($record) {
+                        $user = auth()->user();
+                        
+                        if (!$user || !$user->isCandidate()) {
+                            return;
+                        }
+                        
+                        $hrUser = $record->job?->hr?->user;
+                        
+                        if (!$hrUser) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Error')
+                                ->body('HR user not found for this job.')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+                        
+                        try {
+                            $conversation = $user->createConversationWith($hrUser);
+                            $prefix = config('wirechat.routes.prefix', 'chats');
+                            $chatUrl = url("/{$prefix}/{$conversation->id}");
+                            
+                            return redirect($chatUrl);
+                        } catch (\Exception $e) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Error Creating Chat')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    })
+                    ->visible(fn ($record) => auth()->user() && auth()->user()->isCandidate() && $record->candidate_id === auth()->user()->candidate?->id),
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
                     ->visible(fn () => auth()->user()->isAdmin() || auth()->user()->isCandidate()),
                 Tables\Actions\DeleteAction::make()
@@ -471,6 +479,7 @@ class ApplicationResource extends Resource
     {
         return [
             'index' => Pages\ListApplications::route('/'),
+            'view' => Pages\ViewApplication::route('/{record}'),
             'edit' => Pages\EditApplication::route('/{record}/edit'),
         ];
     }

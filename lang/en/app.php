@@ -56,7 +56,7 @@ return [
     'senior_level' => 'Senior Level',
     'category' => 'Category',
     'application_deadline' => 'Application Deadline',
-    'application_deadline' => 'Application Deadline',
+    'date_placeholder' => 'Date / Month / Year',
     'active' => 'Active',
     'closed' => 'Closed',
     

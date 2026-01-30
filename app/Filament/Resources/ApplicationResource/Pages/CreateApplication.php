@@ -42,11 +42,13 @@ class CreateApplication extends CreateRecord
             if ($score !== null) {
                 $this->record->update(['score' => $score]);
                 
-                \Filament\Notifications\Notification::make()
-                    ->success()
-                    ->title(__('app.cv_scored'))
-                    ->body(__('app.cv_scored_success', ['score' => (int)$score]))
-                    ->send();
+                // Update candidate's global profile score as well
+                if ($this->record->candidate) {
+                    $this->record->candidate->update([
+                        'score' => $score,
+                        'resume_path' => $resumePath
+                    ]);
+                }
             }
         } catch (\Exception $e) {
             Log::error('CV scoring failed for application: ' . $e->getMessage(), [
